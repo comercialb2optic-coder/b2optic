@@ -5,28 +5,28 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 const cards = [
   {
     index: '01',
-    label: 'Triagem',
-    title: 'Triagem Inteligente de Leads',
+    label: 'Captação',
+    title: 'Captação de Leads Qualificados',
     description:
-      'Não desperdice tempo com prospects frios. Nossa IA qualifica automaticamente cada lead, priorizando aqueles com maior probabilidade de conversão. Redução de 60% no tempo de prospecção e aumento de 3x na taxa de conversão.',
+      'Anúncios de exame de vista no Meta e Google + triagem de 3 perguntas filtram quem quer comprar óculos. O lead que chega no balcão já passou pela qualificação — sua vendedora atende quem está pronto pra fechar.',
     image:
       'https://d2xsxph8kpxj0f.cloudfront.net/310519663538512901/kZM2v8qXuFHBjEWTxNfZYk/b2optic-ecosystem-card1-fmMJLCqxCQ5tTsxrNs2fQw.webp',
   },
   {
     index: '02',
-    label: 'Atendimento',
-    title: 'Atendimento Inteligente que Não Dorme',
+    label: 'Estrutura comercial',
+    title: 'Estrutura Comercial Completa',
     description:
-      'Enquanto seus concorrentes dormem, sua ótica segue convertendo. Nossa IA responde dúvidas, agenda exames e qualifica leads automaticamente no WhatsApp, sem perder a humanidade na comunicação. Respostas em menos de 30 segundos.',
+      'CRM próprio + IA de atendimento que agenda o exame automaticamente + app de acompanhamento de vendas e métricas. Ferramentas sob medida pro fluxo da ótica — não software genérico adaptado.',
     image:
       'https://d2xsxph8kpxj0f.cloudfront.net/310519663538512901/kZM2v8qXuFHBjEWTxNfZYk/b2optic-ecosystem-card2-TDDB7S4KsXizySDifsNjVE.webp',
   },
   {
     index: '03',
-    label: 'CRM',
-    title: 'CRM Próprio Desenhado para Óticas',
+    label: 'Treinamento',
+    title: 'Treinamento Comercial Sob Medida',
     description:
-      'Não é um CRM genérico adaptado. Desenvolvemos um sistema específico para o fluxo de vendas de óticas, com automações que transformam leads em clientes sem esforço manual repetitivo. Histórico completo e relatórios em tempo real.',
+      'Vendedoras treinadas pra fechar a venda no balcão. Atendimento consultivo, abordagem específica pra óptica e fechamento — o que faz cliente sair com óculos, não só com cotação no WhatsApp.',
     image:
       'https://d2xsxph8kpxj0f.cloudfront.net/310519663538512901/kZM2v8qXuFHBjEWTxNfZYk/b2optic-ecosystem-card3-jU4brRhNgzWtEqWH9KVkLU.webp',
   },
@@ -57,17 +57,16 @@ export default function Ecosystem() {
           <div className="mb-6 flex justify-center">
             <span className="eyebrow">
               <span className="block h-px w-7 bg-primary/50" />
-              O que fazemos
+              Os 3 pilares
             </span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05] text-foreground">
-            O Ecossistema <span className="text-primary">B2Optic</span>
+            O ecossistema <span className="text-primary">B2Optic</span>
           </h2>
 
           <p className="mt-6 text-[16px] text-muted-foreground leading-relaxed">
-            Mostre, não apenas fale. Conheça as três pilares que transformam sua ótica em uma
-            máquina de vendas.
+            Captação, estrutura comercial e treinamento — costurados pra fazer sua ótica vender mais óculos no balcão.
           </p>
         </motion.div>
 

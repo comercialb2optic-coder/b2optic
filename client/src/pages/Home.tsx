@@ -1,11 +1,17 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ClientsCarousel from '@/components/ClientsCarousel';
+import DiagnosticPreview from '@/components/DiagnosticPreview';
+import Numbers from '@/components/Numbers';
+import Methodology from '@/components/Methodology';
+import Cases from '@/components/Cases';
 import Ecosystem from '@/components/Ecosystem';
 import Certifications from '@/components/Certifications';
 import Guarantee from '@/components/Guarantee';
 import CtaBanner from '@/components/CtaBanner';
+import HowItWorks from '@/components/HowItWorks';
 import DiagnosticForm from '@/components/DiagnosticForm';
+import About from '@/components/About';
 import Footer from '@/components/Footer';
 import OpticalBackdrop from '@/components/OpticalBackdrop';
 
@@ -17,19 +23,12 @@ export default function Home() {
         <Header />
         <Hero />
         <ClientsCarousel />
+        <DiagnosticPreview />
+        <Numbers />
+        <Methodology />
+        <Cases />
         <Ecosystem />
-        <CtaBanner
-          variant="subtle"
-          titulo="Pronto pra ter esse método rodando na sua ótica?"
-          subtitulo="Triagem inteligente, atendimento que não dorme e CRM próprio — operando juntos pelo seu faturamento."
-          textoBotao="Quero escalar minha ótica"
-        />
         <Certifications />
-        <CtaBanner
-          variant="card"
-          titulo="Seu marketing nas mãos de quem é certificado pelo Google e Meta."
-          textoBotao="Solicitar diagnóstico gratuito"
-        />
         <Guarantee />
         <CtaBanner
           variant="accent"
@@ -37,7 +36,15 @@ export default function Home() {
           subtitulo="Risco zero, resultado em contrato. Falta a sua."
           textoBotao="Quero ser a próxima"
         />
+        <HowItWorks />
         <DiagnosticForm />
+        <About />
+        <CtaBanner
+          variant="card"
+          titulo="Pronto pra fazer sua ótica vender mais óculos?"
+          subtitulo="Diagnóstico gratuito. Risco zero. Resultado em contrato."
+          textoBotao="Solicitar diagnóstico"
+        />
         <Footer />
       </div>
     </div>

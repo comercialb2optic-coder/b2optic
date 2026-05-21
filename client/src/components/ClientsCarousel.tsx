@@ -45,11 +45,11 @@ export default function ClientsCarousel() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05] text-foreground max-w-2xl mx-auto">
-            Mais de 70 óticas multiplicaram suas vendas
+            Mais de 200 óticas multiplicaram suas vendas
           </h2>
 
           <p className="mt-6 text-[16px] text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            De pequenas óticas independentes a redes com múltiplas filiais, nossos clientes compartilham um resultado em comum: crescimento acelerado, previsível e sustentável.
+            De óticas independentes a redes com múltiplas filiais — todas com um resultado em comum: mais óculos vendidos no balcão, mês após mês.
           </p>
         </motion.div>
 
