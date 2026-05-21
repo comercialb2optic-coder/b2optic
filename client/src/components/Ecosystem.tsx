@@ -41,7 +41,10 @@ const IMAGE_MASK = 'linear-gradient(to bottom, black 72%, transparent)';
 
 export default function Ecosystem() {
   return (
-    <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-background">
+    <section
+      data-backdrop-theme="ecosystem"
+      className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div

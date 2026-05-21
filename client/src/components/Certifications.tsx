@@ -98,7 +98,10 @@ export default function Certifications() {
   };
 
   return (
-    <section className="relative py-24 sm:py-32 overflow-hidden bg-background">
+    <section
+      data-backdrop-theme="certifications"
+      className="relative py-24 sm:py-32 overflow-hidden"
+    >
       <div className="container relative z-10">
         {/* Header */}
         <motion.div

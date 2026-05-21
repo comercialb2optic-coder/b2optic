@@ -12,9 +12,9 @@ interface CtaBannerProps {
 }
 
 const containerByVariant: Record<Variant, string> = {
-  subtle: 'border-y border-border bg-background',
+  subtle: 'border-y border-border',
   card: 'border-y border-border bg-card/40',
-  accent: 'border-y border-border bg-background',
+  accent: 'border-y border-border',
 };
 
 export default function CtaBanner({

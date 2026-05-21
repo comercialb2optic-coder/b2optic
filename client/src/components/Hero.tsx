@@ -8,7 +8,10 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[88vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-20">
+    <section
+      data-backdrop-theme="hero"
+      className="relative min-h-[88vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-20"
+    >
       {/* Background image */}
       <div
         className="absolute inset-0 z-0"

@@ -24,7 +24,10 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export default function ClientsCarousel() {
   return (
-    <section className="relative py-24 sm:py-32 overflow-hidden bg-background">
+    <section
+      data-backdrop-theme="hero"
+      className="relative py-24 sm:py-32 overflow-hidden"
+    >
       <div className="container relative z-10">
         {/* Header */}
         <motion.div

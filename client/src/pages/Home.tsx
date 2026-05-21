@@ -7,35 +7,39 @@ import Guarantee from '@/components/Guarantee';
 import CtaBanner from '@/components/CtaBanner';
 import DiagnosticForm from '@/components/DiagnosticForm';
 import Footer from '@/components/Footer';
+import OpticalBackdrop from '@/components/OpticalBackdrop';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <Header />
-      <Hero />
-      <ClientsCarousel />
-      <Ecosystem />
-      <CtaBanner
-        variant="subtle"
-        titulo="Pronto pra ter esse método rodando na sua ótica?"
-        subtitulo="Triagem inteligente, atendimento que não dorme e CRM próprio — operando juntos pelo seu faturamento."
-        textoBotao="Quero escalar minha ótica"
-      />
-      <Certifications />
-      <CtaBanner
-        variant="card"
-        titulo="Seu marketing nas mãos de quem é certificado pelo Google e Meta."
-        textoBotao="Solicitar diagnóstico gratuito"
-      />
-      <Guarantee />
-      <CtaBanner
-        variant="accent"
-        titulo="Mais de 200 óticas já confiam na B2Optic."
-        subtitulo="Risco zero, resultado em contrato. Falta a sua."
-        textoBotao="Quero ser a próxima"
-      />
-      <DiagnosticForm />
-      <Footer />
+      <OpticalBackdrop />
+      <div className="relative z-10">
+        <Header />
+        <Hero />
+        <ClientsCarousel />
+        <Ecosystem />
+        <CtaBanner
+          variant="subtle"
+          titulo="Pronto pra ter esse método rodando na sua ótica?"
+          subtitulo="Triagem inteligente, atendimento que não dorme e CRM próprio — operando juntos pelo seu faturamento."
+          textoBotao="Quero escalar minha ótica"
+        />
+        <Certifications />
+        <CtaBanner
+          variant="card"
+          titulo="Seu marketing nas mãos de quem é certificado pelo Google e Meta."
+          textoBotao="Solicitar diagnóstico gratuito"
+        />
+        <Guarantee />
+        <CtaBanner
+          variant="accent"
+          titulo="Mais de 200 óticas já confiam na B2Optic."
+          subtitulo="Risco zero, resultado em contrato. Falta a sua."
+          textoBotao="Quero ser a próxima"
+        />
+        <DiagnosticForm />
+        <Footer />
+      </div>
     </div>
   );
 }
