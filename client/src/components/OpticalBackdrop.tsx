@@ -4,8 +4,106 @@ type Theme = 'hero' | 'ecosystem' | 'certifications' | 'guarantee' | 'form';
 
 const TRANSITION_MS = 500;
 const PRIMARY_RGB = '0, 85, 255';
+const MOUSE_LERP = 0.06;
+const THEME_SCALE = 0.7;
 
 const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
+
+// ────────────────────────────────────────────────────────
+// MESH — ambient layer (always drawn, below themes)
+// ────────────────────────────────────────────────────────
+
+interface MeshBlob {
+  baseX: number;
+  baseY: number;
+  radius: number;
+  color: string;
+  alpha: number;
+  speedX: number;
+  speedY: number;
+  phaseX: number;
+  phaseY: number;
+  ampX: number;
+  ampY: number;
+}
+
+const MESH_BLOBS: MeshBlob[] = [
+  {
+    baseX: 0.22,
+    baseY: 0.32,
+    radius: 0.55,
+    color: PRIMARY_RGB,
+    alpha: 0.2,
+    speedX: 0.000075,
+    speedY: 0.00011,
+    phaseX: 0,
+    phaseY: 1.4,
+    ampX: 0.08,
+    ampY: 0.06,
+  },
+  {
+    baseX: 0.78,
+    baseY: 0.7,
+    radius: 0.5,
+    color: '255, 255, 255',
+    alpha: 0.1,
+    speedX: 0.00009,
+    speedY: 0.00007,
+    phaseX: 2.1,
+    phaseY: 0.6,
+    ampX: 0.06,
+    ampY: 0.07,
+  },
+  {
+    baseX: 0.5,
+    baseY: 0.5,
+    radius: 0.65,
+    color: PRIMARY_RGB,
+    alpha: 0.16,
+    speedX: 0.00006,
+    speedY: 0.00012,
+    phaseX: 3.4,
+    phaseY: 2.6,
+    ampX: 0.05,
+    ampY: 0.05,
+  },
+];
+
+function drawMesh(
+  ctx: CanvasRenderingContext2D,
+  now: number,
+  w: number,
+  h: number,
+  mouseX: number,
+  mouseY: number,
+) {
+  for (const blob of MESH_BLOBS) {
+    const dx = Math.sin(now * blob.speedX + blob.phaseX) * blob.ampX;
+    const dy = Math.sin(now * blob.speedY + blob.phaseY) * blob.ampY;
+    const cx = (blob.baseX + dx) * w;
+    const cy = (blob.baseY + dy) * h;
+    const r = blob.radius * Math.max(w, h);
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    grad.addColorStop(0, `rgba(${blob.color}, ${blob.alpha})`);
+    grad.addColorStop(0.55, `rgba(${blob.color}, ${blob.alpha * 0.32})`);
+    grad.addColorStop(1, `rgba(${blob.color}, 0)`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // Mouse-following blob (trailing) — desktop only path; mobile never enters tick
+  const mr = 380;
+  const mgrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, mr);
+  mgrad.addColorStop(0, `rgba(${PRIMARY_RGB}, 0.18)`);
+  mgrad.addColorStop(0.5, `rgba(${PRIMARY_RGB}, 0.06)`);
+  mgrad.addColorStop(1, `rgba(${PRIMARY_RGB}, 0)`);
+  ctx.fillStyle = mgrad;
+  ctx.fillRect(0, 0, w, h);
+}
+
+// ────────────────────────────────────────────────────────
+// ECOSYSTEM — drifting nodes + connecting lines
+// ────────────────────────────────────────────────────────
 
 interface Node {
   x: number;
@@ -45,6 +143,10 @@ function updateNodes(nodes: Node[], w: number, h: number) {
   }
 }
 
+// ────────────────────────────────────────────────────────
+// THEMES — per-section character (rendered above mesh)
+// ────────────────────────────────────────────────────────
+
 function drawHero(
   ctx: CanvasRenderingContext2D,
   now: number,
@@ -58,15 +160,6 @@ function drawHero(
   const parallaxY = (my - h / 2) * 0.035;
   const cx = w / 2 + parallaxX;
   const cy = h / 2 + parallaxY;
-  const radius = Math.max(w, h) * 0.55;
-
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-  grad.addColorStop(0, `rgba(${PRIMARY_RGB}, ${0.06 * alpha})`);
-  grad.addColorStop(0.4, `rgba(${PRIMARY_RGB}, ${0.025 * alpha})`);
-  grad.addColorStop(1, `rgba(${PRIMARY_RGB}, 0)`);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, w, h);
-
   const breathe = 1 + Math.sin(now * 0.0008) * 0.012;
   for (let i = 0; i < 3; i++) {
     const r = (220 + i * 110) * breathe;
@@ -81,8 +174,8 @@ function drawHero(
 function drawEcosystem(
   ctx: CanvasRenderingContext2D,
   now: number,
-  w: number,
-  h: number,
+  _w: number,
+  _h: number,
   _mx: number,
   _my: number,
   alpha: number,
@@ -121,7 +214,6 @@ function drawEcosystem(
     ctx.arc(n.x, n.y, 1.6, 0, Math.PI * 2);
     ctx.fill();
   }
-  // suppress unused-var noise (eslint)
   void now;
 }
 
@@ -207,12 +299,6 @@ function drawForm(
 ) {
   const cx = w / 2;
   const cy = h * 0.42;
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 460);
-  grad.addColorStop(0, `rgba(${PRIMARY_RGB}, ${0.05 * alpha})`);
-  grad.addColorStop(1, `rgba(${PRIMARY_RGB}, 0)`);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, w, h);
-
   const breathe = 1 + Math.sin(now * 0.0005) * 0.01;
   ctx.beginPath();
   ctx.arc(cx, cy, 260 * breathe, 0, Math.PI * 2);
@@ -221,6 +307,10 @@ function drawForm(
   ctx.stroke();
 }
 
+// ────────────────────────────────────────────────────────
+// Media query — mobile / reduced-motion → static mode
+// ────────────────────────────────────────────────────────
+
 function isCoarseOrReduced(): boolean {
   if (typeof window === 'undefined') return true;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -228,10 +318,63 @@ function isCoarseOrReduced(): boolean {
   return reduced || narrow;
 }
 
+// ────────────────────────────────────────────────────────
+// Grain overlay — filmic noise (CSS-only, mobile-safe)
+// ────────────────────────────────────────────────────────
+
+function Grain() {
+  return (
+    <svg
+      aria-hidden
+      className="absolute inset-0 h-full w-full opacity-[0.07] mix-blend-overlay"
+      preserveAspectRatio="none"
+    >
+      <filter id="b2-grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.9"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.33 0.33 0.33 0 0"
+        />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#b2-grain)" />
+    </svg>
+  );
+}
+
+// ────────────────────────────────────────────────────────
+// Static fallback — CSS-only mesh (mirrors blob positions)
+// ────────────────────────────────────────────────────────
+
+function StaticMesh() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0"
+      style={{
+        background: `
+          radial-gradient(circle at 22% 32%, rgba(0, 85, 255, 0.2), transparent 55%),
+          radial-gradient(circle at 78% 70%, rgba(255, 255, 255, 0.1), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(0, 85, 255, 0.16), transparent 65%)
+        `,
+      }}
+    />
+  );
+}
+
+// ────────────────────────────────────────────────────────
+// Component
+// ────────────────────────────────────────────────────────
+
 export default function OpticalBackdrop() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const mouseLerpRef = useRef({ x: 0, y: 0 });
   const sizeRef = useRef({ w: 0, h: 0 });
   const nodesRef = useRef<Node[]>([]);
   const currentThemeRef = useRef<Theme>('hero');
@@ -281,6 +424,8 @@ export default function OpticalBackdrop() {
 
     mouseRef.current.x = window.innerWidth / 2;
     mouseRef.current.y = window.innerHeight / 2;
+    mouseLerpRef.current.x = mouseRef.current.x;
+    mouseLerpRef.current.y = mouseRef.current.y;
 
     let resizeTimer: number | null = null;
     const onResize = () => {
@@ -326,29 +471,26 @@ export default function OpticalBackdrop() {
     );
     sections.forEach((s) => observer.observe(s));
 
-    const renderTheme = (
-      theme: Theme,
-      now: number,
-      alpha: number,
-    ) => {
+    const renderTheme = (theme: Theme, now: number, alpha: number) => {
       const { w, h } = sizeRef.current;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
+      const a = alpha * THEME_SCALE;
       switch (theme) {
         case 'hero':
-          drawHero(ctx, now, w, h, mx, my, alpha);
+          drawHero(ctx, now, w, h, mx, my, a);
           break;
         case 'ecosystem':
-          drawEcosystem(ctx, now, w, h, mx, my, alpha, nodesRef.current);
+          drawEcosystem(ctx, now, w, h, mx, my, a, nodesRef.current);
           break;
         case 'certifications':
-          drawCertifications(ctx, now, w, h, mx, my, alpha);
+          drawCertifications(ctx, now, w, h, mx, my, a);
           break;
         case 'guarantee':
-          drawGuarantee(ctx, now, w, h, mx, my, alpha);
+          drawGuarantee(ctx, now, w, h, mx, my, a);
           break;
         case 'form':
-          drawForm(ctx, now, w, h, mx, my, alpha);
+          drawForm(ctx, now, w, h, mx, my, a);
           break;
       }
     };
@@ -359,6 +501,23 @@ export default function OpticalBackdrop() {
 
       updateNodes(nodesRef.current, w, h);
 
+      // Mouse trailing lerp
+      mouseLerpRef.current.x +=
+        (mouseRef.current.x - mouseLerpRef.current.x) * MOUSE_LERP;
+      mouseLerpRef.current.y +=
+        (mouseRef.current.y - mouseLerpRef.current.y) * MOUSE_LERP;
+
+      // Ambient mesh (always)
+      drawMesh(
+        ctx,
+        now,
+        w,
+        h,
+        mouseLerpRef.current.x,
+        mouseLerpRef.current.y,
+      );
+
+      // Per-section theme (with crossfade)
       const tRaw =
         transitionStartRef.current > 0
           ? Math.min(1, (now - transitionStartRef.current) / TRANSITION_MS)
@@ -399,24 +558,14 @@ export default function OpticalBackdrop() {
     };
   }, [staticMode]);
 
-  if (staticMode) {
-    return (
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 20%, rgba(0, 85, 255, 0.045), transparent 55%)',
-        }}
-      />
-    );
-  }
-
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden
-      className="pointer-events-none fixed inset-0 z-0"
-    />
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+      {staticMode ? (
+        <StaticMesh />
+      ) : (
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      )}
+      <Grain />
+    </div>
   );
 }

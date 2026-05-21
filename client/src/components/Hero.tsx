@@ -1,10 +1,17 @@
 import { motion } from 'framer-motion';
+import WordReveal from '@/components/motion/WordReveal';
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const scrollToForm = () => {
-    document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' });
+    document
+      .getElementById('form-section')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToCases = () => {
+    document.getElementById('cases')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -37,53 +44,88 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.05, ease: EASE_OUT }}
         >
-          <motion.span
-            className="relative flex h-1.5 w-1.5"
-            aria-hidden
-          >
+          <span className="relative flex h-1.5 w-1.5" aria-hidden>
             <span className="absolute inset-0 rounded-full bg-primary/60 animate-ping" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-          </motion.span>
+          </span>
           <span>+R$ 13M em vendas · +200 óticas atendidas</span>
         </motion.div>
 
-        {/* Headline */}
-        <motion.h1
-          className="text-[44px] sm:text-6xl lg:text-[72px] font-semibold mb-6 tracking-[-0.025em] leading-[1.02] text-foreground"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT }}
-        >
-          A <span className="text-primary">única aceleradora</span> de óticas que assume o{' '}
-          <span className="text-primary">risco</span> por você.
-        </motion.h1>
+        {/* Headline — WordReveal por linha, "óculos." em primary */}
+        <h1 className="text-[44px] sm:text-6xl lg:text-[72px] font-semibold mb-7 tracking-[-0.025em] leading-[1.02] text-foreground">
+          <WordReveal
+            text="Não vendemos leads."
+            delay={0.15}
+            duration={0.6}
+            as="span"
+            className="block"
+          />
+          <WordReveal
+            text="Fazemos sua ótica"
+            delay={0.32}
+            duration={0.6}
+            as="span"
+            className="block"
+          />
+          <span className="block">
+            <WordReveal
+              text="vender mais"
+              delay={0.5}
+              duration={0.6}
+              as="span"
+            />{' '}
+            <WordReveal
+              text="óculos."
+              delay={0.62}
+              duration={0.6}
+              as="span"
+              className="text-primary"
+            />
+          </span>
+        </h1>
 
         {/* Subtitle */}
         <motion.p
           className="text-[17px] sm:text-lg text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3, ease: EASE_OUT }}
+          transition={{ duration: 0.7, delay: 0.85, ease: EASE_OUT }}
         >
-          Esqueça leads frios e achismo comercial. Transformamos sua ótica em uma máquina
-          previsível de vendas com captação qualificada, IA de atendimento e CRM próprio.
+          Assessoria de marketing e vendas pra ótica. Captação qualificada,
+          estrutura comercial e venda finalizada no balcão — costurados pra
+          um só resultado.
         </motion.p>
 
-        {/* CTA */}
+        {/* CTAs */}
         <motion.div
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.42, ease: EASE_OUT }}
+          transition={{ duration: 0.7, delay: 1.05, ease: EASE_OUT }}
         >
           <button
             type="button"
             onClick={scrollToForm}
-            className="btn-primary group text-[15px] px-6 py-3.5"
+            className="btn-primary group text-[15px] px-6 py-3.5 w-full sm:w-auto"
           >
             <span>Quero escalar minha ótica</span>
             <span
               aria-hidden
               className="transition-transform duration-300 group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={scrollToCases}
+            className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-md border border-white/12 bg-white/[0.02] px-6 py-3.5 text-[15px] font-medium text-foreground/90 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.05] hover:text-foreground"
+          >
+            <span>Ver cases</span>
+            <span
+              aria-hidden
+              className="text-foreground/40 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-foreground/70"
             >
               →
             </span>
