@@ -105,7 +105,7 @@ export default function DiagnosticForm() {
     <section
       id="form-section"
       data-backdrop-theme="form"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -118,14 +118,15 @@ export default function DiagnosticForm() {
           <div className="mb-6 flex justify-center">
             <span className="eyebrow">
               <span className="block h-px w-7 bg-primary/50" />
-              Diagnóstico gratuito
+              Vamos acelerar?
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-semibold tracking-[-0.025em] leading-[1.05] text-foreground">
-            Pronto pra escalar sua <span className="text-primary">ótica</span>?
+            Dar o próximo passo leva apenas{' '}
+            <span className="text-primary">1 minuto</span>
           </h2>
           <p className="mt-6 text-[16px] text-muted-foreground leading-relaxed">
-            Preencha em 3 minutos. Nossa equipe entra em contato em até 24h pra agendar a conversa de diagnóstico.
+            Preencha em 1 minuto. Nossa equipe entra em contato em até 12h pra agendar a conversa.
           </p>
         </motion.div>
 
@@ -185,15 +186,9 @@ export default function DiagnosticForm() {
                     <button
                       type="button"
                       onClick={back}
-                      className="group inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-5 py-3 text-[14px] font-medium text-foreground/85 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/22 hover:bg-white/[0.05] hover:text-foreground"
+                      className="btn-secondary"
                     >
-                      <span
-                        aria-hidden
-                        className="text-foreground/40 transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:text-foreground/70"
-                      >
-                        ←
-                      </span>
-                      <span>Voltar</span>
+                      Voltar
                     </button>
                   )}
 
@@ -201,17 +196,9 @@ export default function DiagnosticForm() {
                     type={step === 3 ? 'submit' : 'button'}
                     onClick={step === 3 ? undefined : next}
                     disabled={isSubmitting}
-                    className="btn-primary group flex-1 text-[15px] py-3.5 disabled:opacity-60 disabled:pointer-events-none"
+                    className="btn-primary flex-1"
                   >
-                    <span>
-                      {step === 3 ? 'Solicitar diagnóstico' : 'Continuar'}
-                    </span>
-                    <span
-                      aria-hidden
-                      className="transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
+                    {step === 3 ? 'Solicitar diagnóstico' : 'Continuar'}
                   </button>
                 </div>
               </form>
@@ -384,7 +371,7 @@ function TrustRow() {
   return (
     <div className="mt-6 flex items-center justify-center gap-2 text-[12px] text-muted-foreground/85">
       <Lock className="h-3 w-3" strokeWidth={2} />
-      <span>Seus dados estão seguros · Resposta em até 24h</span>
+      <span>Seus dados estão seguros · Resposta em até 12h</span>
     </div>
   );
 }
@@ -404,7 +391,7 @@ function SuccessState() {
         Aplicação recebida
       </h3>
       <p className="text-[15px] text-muted-foreground leading-relaxed max-w-sm mx-auto">
-        Nossa equipe entra em contato no WhatsApp em até 24h pra agendar a reunião de diagnóstico.
+        Nossa equipe entra em contato no WhatsApp em até 12h pra agendar a reunião de diagnóstico.
       </p>
     </motion.div>
   );

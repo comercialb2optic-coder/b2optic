@@ -55,15 +55,9 @@ export default function CtaBanner({
         <button
           type="button"
           onClick={scrollToForm}
-          className="btn-primary group text-[15px] px-6 py-3.5"
+          className="btn-primary"
         >
-          <span>{textoBotao}</span>
-          <span
-            aria-hidden
-            className="transition-transform duration-300 group-hover:translate-x-0.5"
-          >
-            →
-          </span>
+          {textoBotao}
         </button>
       </motion.div>
     </section>

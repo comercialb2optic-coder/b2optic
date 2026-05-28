@@ -7,7 +7,7 @@ export default function About() {
     <section
       id="about"
       data-backdrop-theme="form"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">

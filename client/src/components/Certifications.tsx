@@ -100,12 +100,12 @@ export default function Certifications() {
   return (
     <section
       data-backdrop-theme="certifications"
-      className="relative py-24 sm:py-32 overflow-hidden"
+      className="relative py-16 sm:py-24 md:py-32 overflow-hidden"
     >
       <div className="container relative z-10">
         {/* Header */}
         <motion.div
-          className="text-center mb-16 sm:mb-20 max-w-3xl mx-auto"
+          className="text-center mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
@@ -202,7 +202,7 @@ export default function Certifications() {
 
         {/* CTA */}
         <motion.div
-          className="mt-16 sm:mt-20 text-center"
+          className="mt-12 sm:mt-16 md:mt-20 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
@@ -214,15 +214,9 @@ export default function Certifications() {
           <button
             type="button"
             onClick={scrollToForm}
-            className="btn-primary group text-[15px] px-6 py-3.5"
+            className="btn-primary"
           >
-            <span>Falar com um consultor</span>
-            <span
-              aria-hidden
-              className="transition-transform duration-300 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
+            Falar com um consultor
           </button>
         </motion.div>
       </div>

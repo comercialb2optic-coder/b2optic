@@ -24,9 +24,16 @@ export default function Home() {
         <Hero />
         <ClientsCarousel />
         <DiagnosticPreview />
+        <DiagnosticForm />
+        <Cases />
+        <CtaBanner
+          variant="subtle"
+          titulo="Convencido? Sua ótica é a próxima."
+          subtitulo="Preenche em 1 minuto e nossa equipe entra em contato em até 12h."
+          textoBotao="Quero meu diagnóstico gratuito"
+        />
         <Numbers />
         <Methodology />
-        <Cases />
         <Ecosystem />
         <Certifications />
         <Guarantee />
@@ -37,7 +44,6 @@ export default function Home() {
           textoBotao="Quero ser a próxima"
         />
         <HowItWorks />
-        <DiagnosticForm />
         <About />
         <CtaBanner
           variant="card"

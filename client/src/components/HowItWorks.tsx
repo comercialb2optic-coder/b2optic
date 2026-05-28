@@ -6,11 +6,11 @@ const STEPS = [
   {
     number: '01',
     title: 'Preencha o formulário',
-    body: '3 minutos de perguntas pra entendermos seu cenário e qualificar a aplicação.',
+    body: '1 minuto de perguntas pra entendermos seu cenário e qualificar a aplicação.',
   },
   {
     number: '02',
-    title: 'Receba contato em até 24h',
+    title: 'Receba contato em até 12h',
     body: 'Nosso time chama no WhatsApp pra agendar a reunião de diagnóstico — sem custo, sem compromisso.',
   },
 ];
@@ -20,11 +20,11 @@ export default function HowItWorks() {
     <section
       id="how-it-works"
       data-backdrop-theme="form"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-16 sm:mb-20 max-w-2xl mx-auto"
+          className="text-center mb-12 sm:mb-16 md:mb-20 max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}

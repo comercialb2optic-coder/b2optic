@@ -66,7 +66,7 @@ export default function Methodology() {
   return (
     <section
       data-backdrop-theme="guarantee"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <Header />
       {isMobile || reduced ? <MobileTimeline /> : <DesktopCycle />}
@@ -77,7 +77,7 @@ export default function Methodology() {
 function Header() {
   return (
     <motion.div
-      className="text-center mb-16 sm:mb-20 max-w-2xl mx-auto"
+      className="text-center mb-12 sm:mb-16 md:mb-20 max-w-2xl mx-auto"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}
