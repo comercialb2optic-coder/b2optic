@@ -36,8 +36,8 @@ export default function Cases() {
               Cases de sucesso
             </span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05] text-foreground">
-            Nossos resultados falam por nós
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05] text-gradient">
+            Nossos resultados falam por si só
           </h2>
           <p className="mt-6 text-[16px] text-muted-foreground leading-relaxed">
             Donos de óticas contando, no formato deles, o que mudou depois do método B2Optic.

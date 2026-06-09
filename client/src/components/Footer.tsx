@@ -1,108 +1,82 @@
 import { motion } from 'framer-motion';
+import { Instagram, Linkedin, MessageCircle, Youtube } from 'lucide-react';
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-const QUICK_LINKS = [
-  { label: 'Sobre', href: '#' },
-  { label: 'Serviços', href: '#' },
-  { label: 'Contato', href: '#' },
+const SOCIAL_LINKS = [
+  {
+    label: 'WhatsApp',
+    href: 'https://wa.me/55XXXXXXXXXXX', // [PREENCHER]
+    Icon: MessageCircle,
+  },
+  {
+    label: 'YouTube',
+    href: '#', // [PREENCHER]
+    Icon: Youtube,
+  },
+  {
+    label: 'LinkedIn',
+    href: '#', // [PREENCHER]
+    Icon: Linkedin,
+  },
+  {
+    label: 'Instagram',
+    href: '#', // [PREENCHER]
+    Icon: Instagram,
+  },
 ];
-
-const CONTACT_LINKS = [
-  { label: 'contato@b2optic.com', href: 'mailto:contato@b2optic.com' },
-  { label: '+55 (11) 9 9999-9999', href: 'tel:+5511999999999' },
-];
-
-const headingClass =
-  'mb-5 block text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground';
 
 export default function Footer() {
   return (
-    <footer className="relative bg-background border-t border-border/60">
-      <div className="section-divider" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+    <footer className="relative border-t border-border/30">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-14"
-          initial={{ opacity: 0, y: 20 }}
+          className="flex flex-col items-center text-center gap-7 sm:gap-9"
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE_OUT }}
           viewport={{ once: true, margin: '-40px' }}
         >
-          {/* Brand */}
-          <div>
-            <h3
-              className="text-xl font-semibold tracking-[-0.01em] text-foreground mb-4"
-            >
-              <span className="text-primary">B2</span>Optic
-            </h3>
-            <p className="text-[14px] leading-relaxed text-muted-foreground max-w-[260px]">
-              O sucesso da sua ótica é o nosso negócio.
-            </p>
-          </div>
+          {/* Social row */}
+          <ul className="flex items-center justify-center gap-5 sm:gap-6">
+            {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+              <li key={label}>
+                <a
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/40 text-foreground/60 transition-[color,border-color,background-color] duration-300 hover:text-primary hover:border-primary/45 hover:bg-primary/[0.06]"
+                >
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={1.6} />
+                </a>
+              </li>
+            ))}
+          </ul>
 
-          {/* Quick links */}
-          <div>
-            <span className={headingClass}>Links rápidos</span>
-            <ul className="space-y-3">
-              {QUICK_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-[14px] text-foreground/70 hover:text-foreground transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <span className={headingClass}>Contato</span>
-            <ul className="space-y-3">
-              {CONTACT_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-[14px] text-foreground/70 hover:text-foreground transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </motion.div>
-
-        {/* Subtle inner divider */}
-        <div className="section-divider" />
-
-        <motion.div
-          className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT }}
-          viewport={{ once: true }}
-        >
-          <p className="text-[12px] text-muted-foreground/80">
-            © 2026 B2Optic. Todos os direitos reservados.
+          {/* Copyright */}
+          <p className="text-[11.5px] text-muted-foreground/75 leading-relaxed text-center">
+            Copyright © | 2026 B2Optic
           </p>
-          <div className="flex gap-6">
+
+          {/* Legal links */}
+          <p className="text-[11.5px] text-muted-foreground/70">
             <a
               href="#"
-              className="text-[12px] text-muted-foreground/80 hover:text-foreground transition-colors duration-300"
+              className="transition-colors duration-300 hover:text-foreground"
             >
-              Política de Privacidade
+              Termos de uso
             </a>
+            <span aria-hidden className="mx-2 text-muted-foreground/40">
+              |
+            </span>
             <a
               href="#"
-              className="text-[12px] text-muted-foreground/80 hover:text-foreground transition-colors duration-300"
+              className="transition-colors duration-300 hover:text-foreground"
             >
-              Termos de Serviço
+              Políticas de privacidade
             </a>
-          </div>
+          </p>
         </motion.div>
       </div>
     </footer>

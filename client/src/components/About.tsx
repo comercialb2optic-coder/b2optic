@@ -1,93 +1,97 @@
 import { motion } from 'framer-motion';
-import { UserRound } from 'lucide-react';
-import { BlurFade, EASE_OUT_QUINT } from '@/components/motion';
+import { EASE_OUT_QUINT } from '@/components/motion';
 
 export default function About() {
   return (
     <section
       id="about"
       data-backdrop-theme="form"
-      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8"
+      className="relative overflow-hidden bg-background py-24 sm:py-32 md:py-40 px-4 sm:px-6 lg:px-8"
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left — photo placeholder */}
-          <BlurFade>
-            <PhotoPlaceholder />
-          </BlurFade>
+      {/* Background image — foto do time quase nítida (blur 3px só pra tirar
+         o ruído). scale-105 evita borda transparente do blur. Fallback:
+         bg-background do section mantém a seção legível se a imagem falhar. */}
+      <img
+        src="/oticas/team.webp"
+        alt=""
+        aria-hidden
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover scale-105 blur-[3px] opacity-100"
+      />
 
-          {/* Right — content */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: EASE_OUT_QUINT }}
-            viewport={{ once: true, margin: '-80px' }}
-          >
-            <div className="mb-6 flex">
-              <span className="eyebrow">
-                <span className="block h-px w-7 bg-primary/50" />
-                Quem somos
-              </span>
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-semibold tracking-[-0.025em] leading-[1.05] text-foreground mb-6">
-              Não somos agência.<br />
-              Somos <span className="text-primary">sócios</span> da sua ótica.
-            </h2>
-
-            <p className="text-[16px] text-muted-foreground leading-relaxed mb-5">
-              A B2Optic nasceu pra resolver o problema real do dono de ótica: lead não paga conta — óculos paga. Por isso somos assessoria de marketing <em className="not-italic text-foreground/95">e vendas</em>, não agência de tráfego.
-            </p>
-
-            <p className="text-[16px] text-muted-foreground leading-relaxed mb-9">
-              Nossa missão é uma só: fazer sua ótica vender mais óculos no balcão. Captação, estrutura comercial e treinamento — costurados pra esse único resultado, com risco assumido em contrato.
-            </p>
-
-            {/* Sign-off */}
-            <div className="flex items-center gap-3 pt-6 border-t border-border">
-              <div className="flex flex-col">
-                <span className="text-[14px] font-semibold tracking-[-0.005em] text-foreground">
-                  [PREENCHER — Nome do fundador]
-                </span>
-                <span className="text-[12px] uppercase tracking-[0.14em] text-muted-foreground mt-1">
-                  Fundador · B2Optic
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PhotoPlaceholder() {
-  return (
-    <div className="relative aspect-[4/5] w-full max-w-[480px] mx-auto md:mx-0 overflow-hidden rounded-2xl border border-border bg-card/40">
-      {/* Diagonal gradient */}
+      {/* Overlay único — vinheta: transparente no centro (foto respira),
+         escurece só nas bordas; leve costura no topo/rodapé pra amarrar
+         com as seções vizinhas. Sem empilhar camadas escuras. */}
       <div
+        aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(145deg, rgba(0, 85, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0.3) 100%)',
+            'linear-gradient(to bottom, rgba(5,5,5,0.6), transparent 22%, transparent 78%, rgba(5,5,5,0.6)), radial-gradient(ellipse at center, rgba(5,5,5,0.35) 35%, rgba(5,5,5,0.78) 100%)',
         }}
       />
 
-      {/* Corner accents */}
-      <span className="pointer-events-none absolute left-5 top-5 h-3 w-3 border-l border-t border-primary/40" />
-      <span className="pointer-events-none absolute right-5 top-5 h-3 w-3 border-r border-t border-primary/40" />
-      <span className="pointer-events-none absolute bottom-5 left-5 h-3 w-3 border-b border-l border-primary/40" />
-      <span className="pointer-events-none absolute bottom-5 right-5 h-3 w-3 border-b border-r border-primary/40" />
+      {/* Content — text-shadow herda pros filhos pra legibilidade sobre a foto */}
+      <div
+        className="relative max-w-5xl mx-auto text-center"
+        style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
+      >
+        {/* Eyebrow */}
+        <motion.div
+          className="mb-7 flex justify-center"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASE_OUT_QUINT }}
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          <span className="eyebrow text-gradient-silver">
+            <span className="block h-px w-7 bg-primary/50" />
+            O propósito da B2Optic é
+          </span>
+        </motion.div>
 
-      {/* Center icon + label */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-background/30 backdrop-blur-sm">
-          <UserRound className="h-6 w-6 text-foreground/50" strokeWidth={1.5} />
-        </div>
-        <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/70">
-          [PREENCHER — foto do fundador]
-        </span>
+        {/* Headline — gradient em span interno (h2 neutro), animação no bloco */}
+        <motion.h2
+          className="text-4xl sm:text-5xl lg:text-[64px] font-semibold tracking-[-0.025em] leading-[1.05] mb-8 sm:mb-10 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.6))]"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, delay: 0.08, ease: EASE_OUT_QUINT }}
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          <span className="text-gradient">
+            FAZER SUA ÓTICA VENDER MAIS NO BALCÃO
+          </span>
+        </motion.h2>
+
+        {/* Subtitle — palavra-chave "acelerar" em azul primary */}
+        <motion.p
+          className="text-xl sm:text-2xl lg:text-[28px] font-medium tracking-[-0.01em] leading-[1.25] text-foreground/95 mb-10 sm:mb-12 max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.18, ease: EASE_OUT_QUINT }}
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          Um time preparado para{' '}
+          <span className="text-primary">acelerar</span> a sua ótica
+        </motion.p>
+
+        {/* Paragraphs */}
+        <motion.div
+          className="space-y-5 max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.28, ease: EASE_OUT_QUINT }}
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          <p className="text-[16px] sm:text-[17px] leading-relaxed text-foreground/80">
+            Na B2Optic, unimos estratégia, tecnologia e execução pra transformar o marketing da sua ótica em vendas reais no balcão. Somos especialistas em captação qualificada, automação de agendamento e estruturação do processo comercial — tudo conectado pra gerar crescimento previsível.
+          </p>
+          <p className="text-[16px] sm:text-[17px] leading-relaxed text-foreground/80">
+            Nosso time trabalha lado a lado com cada ótica parceira, criando soluções sob medida que transformam desafios em oportunidades. Mais de 200 óticas aceleradas e +R$ 13 milhões em vendas geradas comprovam: a gente vive aquilo que entrega.
+          </p>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }

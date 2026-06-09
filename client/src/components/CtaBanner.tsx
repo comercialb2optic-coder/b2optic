@@ -9,6 +9,7 @@ interface CtaBannerProps {
   subtitulo?: string;
   textoBotao: string;
   variant?: Variant;
+  gradientTitulo?: boolean;
 }
 
 const containerByVariant: Record<Variant, string> = {
@@ -22,6 +23,7 @@ export default function CtaBanner({
   subtitulo,
   textoBotao,
   variant = 'subtle',
+  gradientTitulo = false,
 }: CtaBannerProps) {
   const scrollToForm = () => {
     document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -42,7 +44,11 @@ export default function CtaBanner({
         transition={{ duration: 0.7, ease: EASE_OUT }}
         viewport={{ once: true, margin: '-80px' }}
       >
-        <h2 className="text-2xl sm:text-3xl lg:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] text-foreground max-w-2xl">
+        <h2
+          className={`text-2xl sm:text-3xl lg:text-[36px] font-semibold tracking-[-0.025em] leading-[1.1] max-w-2xl ${
+            gradientTitulo ? 'text-gradient' : 'text-foreground'
+          }`}
+        >
           {titulo}
         </h2>
 

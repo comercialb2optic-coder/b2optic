@@ -65,7 +65,7 @@ export default function Hero() {
                 <span className="text-[22px] sm:text-[26px] font-bold leading-none tracking-[-0.03em] text-primary tabular-nums">
                   +R$ 13M
                 </span>
-                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-muted-foreground sm:text-[11px] sm:tracking-[0.12em]">
+                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-gradient-silver sm:text-[11px] sm:tracking-[0.12em]">
                   em vendas geradas
                 </span>
               </div>
@@ -81,7 +81,7 @@ export default function Hero() {
                 <span className="text-[22px] sm:text-[26px] font-bold leading-none tracking-[-0.03em] text-card-foreground tabular-nums">
                   +200
                 </span>
-                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-muted-foreground sm:text-[11px] sm:tracking-[0.12em]">
+                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-gradient-silver sm:text-[11px] sm:tracking-[0.12em]">
                   óticas aceleradas
                 </span>
               </div>

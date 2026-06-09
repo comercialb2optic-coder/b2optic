@@ -203,10 +203,17 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
-
-export default defineConfig({
-  plugins,
+export default defineConfig(({ command }) => ({
+  // O vitePluginManusRuntime injeta runtime de instrumentação/overlay no HTML.
+  // Mantemos apenas em dev (command === 'serve'); fora do build de produção.
+  plugins: [
+    react(),
+    tailwindcss(),
+    jsxLocPlugin(),
+    ...(command !== "build" ? [vitePluginManusRuntime()] : []),
+    vitePluginManusDebugCollector(),
+    vitePluginStorageProxy(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -238,4 +245,4 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
-});
+}));

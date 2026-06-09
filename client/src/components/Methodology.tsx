@@ -8,26 +8,30 @@ import {
 import { useRef, useState } from 'react';
 import { BlurFade, EASE_OUT_QUINT, useIsMobile } from '@/components/motion';
 
+// Logo central do ciclo — teste azul+prata. Reverter trocando pela linha comentada abaixo.
+const CENTER_LOGO_SRC = '/oticas/b2optic-logo-azul-prata.png';
+// const CENTER_LOGO_SRC = '/b2optic-logo.png';
+
 const STEPS = [
   {
     number: '01',
     label: 'CAPTAÇÃO',
-    body: 'Anúncios de exame de vista + triagem de 3 perguntas (já usa óculos? prioridade pro exame? quer comprar óculos depois?) entregam lead qualificado.',
+    body: 'Anúncios com criativos validados que atraem lead já qualificado e com real intenção de compra — não volume vazio, mas gente pronta pra entrar na sua loja.',
   },
   {
     number: '02',
     label: 'AGENDAMENTO',
-    body: 'CRM próprio + IA de atendimento agendam o exame automaticamente — sem perder venda por demora na resposta.',
+    body: 'Agendamento automático e humano trabalhando juntos. Uma IA autônoma conversa com o lead e marca a consulta 24h por dia, e nosso time de SDRs próprios reforça o atendimento garantindo que nenhum lead fique sem resposta — tudo conectado, com o horário caindo direto na sua agenda.',
   },
   {
     number: '03',
     label: 'CONVERSÃO',
-    body: 'Vendedoras treinadas com método sob medida fecham a venda do óculos no balcão. Atendimento consultivo, não roteiro.',
+    body: 'O lead chega aquecido e confirmado. Lembretes automáticos no WhatsApp avisam local, dia e horário conforme a data se aproxima — e sua equipe treinada fecha a venda dos óculos no balcão.',
   },
   {
     number: '04',
     label: 'GESTÃO',
-    body: 'App de acompanhamento de vendas e métricas em tempo real + ferramentas pra otimizar o que funciona.',
+    body: 'Acompanhamento de vendas e métricas em tempo real, com gestão de leads e oportunidades — pra você enxergar o que está convertendo e escalar o que funciona.',
   },
 ];
 
@@ -84,16 +88,18 @@ function Header() {
       viewport={{ once: true, margin: '-80px' }}
     >
       <div className="mb-6 flex justify-center">
-        <span className="eyebrow">
+        <span className="eyebrow text-gradient-silver">
           <span className="block h-px w-7 bg-primary/50" />
           Metodologia B2Optic
         </span>
       </div>
-      <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05] text-foreground">
-        O ciclo que faz sua ótica vender mais óculos
+      <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-[-0.02em] leading-[1.05]">
+        <span className="text-gradient">
+          Conheça nossa metodologia B2Optic
+        </span>
       </h2>
       <p className="mt-6 text-[16px] text-muted-foreground leading-relaxed">
-        Captação, agendamento, conversão e gestão — costurados num ciclo previsível.
+        Captação, agendamento, conversão e gestão para ter um ciclo previsível.
       </p>
     </motion.div>
   );
@@ -157,7 +163,7 @@ function DesktopCycle() {
       >
         {!logoError ? (
           <img
-            src="/b2optic-logo.png"
+            src={CENTER_LOGO_SRC}
             alt="B2Optic"
             className="h-full w-full object-contain"
             onError={() => setLogoError(true)}
@@ -238,7 +244,7 @@ function ScrollCard({
           Passo {step.number}
         </span>
       </div>
-      <h3 className="mb-2 text-[15px] font-semibold tracking-[-0.01em] text-foreground">
+      <h3 className="mb-2 text-[15px] font-semibold tracking-[-0.01em] text-gradient-card">
         {step.label}
       </h3>
       <p className="text-[12.5px] leading-[1.45] text-muted-foreground line-clamp-3">
@@ -280,7 +286,7 @@ function MobileTimeline() {
                 {step.number}
               </span>
               <div className="pt-1.5">
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary mb-2.5">
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gradient-card mb-2.5">
                   {step.label}
                 </h3>
                 <p className="text-[15px] leading-relaxed text-foreground/85">

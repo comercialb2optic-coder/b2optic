@@ -1,21 +1,21 @@
 import { motion } from 'framer-motion';
 
 const OPTICAS_LOGOS = [
-  { id: 1, name: 'Ótica Ipanema', url: '/OTICAS/otica-ipanema.png' },
-  { id: 2, name: 'Clic Optical', url: '/OTICAS/clicoptical.png' },
-  { id: 3, name: 'Mercadão dos Óculos', url: '/OTICAS/mercadao-dos-oculos.png' },
-  { id: 4, name: 'Ótica Vitelli', url: '/OTICAS/otica-vitelli.png' },
-  { id: 5, name: 'Ótica Visual', url: '/OTICAS/otica-visual.png' },
-  { id: 6, name: 'Ótica Carol', url: '/OTICAS/otica-carol.png' },
-  { id: 7, name: 'Instituto dos Óculos', url: '/OTICAS/instituto-dos-oculos.png' },
-  { id: 8, name: '99 Óticas', url: '/OTICAS/99-oticas.png' },
-  { id: 9, name: 'Ótica Visart', url: '/OTICAS/otica-visart.png' },
-  { id: 10, name: 'Ótica Popular Mix', url: '/OTICAS/otica-popular-mix.png' },
-  { id: 11, name: 'Ótica Verzara', url: '/OTICAS/otica-verzara.png' },
-  { id: 12, name: 'Ótica Visão 44', url: '/OTICAS/otica-visao-44.png' },
-  { id: 13, name: 'Fullab', url: '/OTICAS/fullab.png' },
-  { id: 14, name: 'Holy Óptica', url: '/OTICAS/holy-optica.png' },
-  { id: 15, name: 'Bella Ótica', url: '/OTICAS/bella-otica.png' },
+  { id: 1, name: 'Ótica Ipanema', url: '/oticas/otica-ipanema.png' },
+  { id: 2, name: 'Clic Optical', url: '/oticas/clicoptical.png' },
+  { id: 3, name: 'Mercadão dos Óculos', url: '/oticas/mercadao-dos-oculos.png' },
+  { id: 4, name: 'Ótica Vitelli', url: '/oticas/otica-vitelli.png' },
+  { id: 5, name: 'Ótica Visual', url: '/oticas/otica-visual.png' },
+  { id: 6, name: 'Ótica Carol', url: '/oticas/otica-carol.png' },
+  { id: 7, name: 'Instituto dos Óculos', url: '/oticas/instituto-dos-oculos.png' },
+  { id: 8, name: '99 Óticas', url: '/oticas/99-oticas.png' },
+  { id: 9, name: 'Ótica Visart', url: '/oticas/otica-visart.png' },
+  { id: 10, name: 'Ótica Popular Mix', url: '/oticas/otica-popular-mix.png' },
+  { id: 11, name: 'Ótica Verzara', url: '/oticas/otica-verzara.png' },
+  { id: 12, name: 'Ótica Visão 44', url: '/oticas/otica-visao-44.png' },
+  { id: 13, name: 'Fullab', url: '/oticas/fullab.png' },
+  { id: 14, name: 'Holy Óptica', url: '/oticas/holy-optica.png' },
+  { id: 15, name: 'Bella Ótica', url: '/oticas/bella-otica.png' },
 ];
 
 const DUPLICATED_LOGOS = [...OPTICAS_LOGOS, ...OPTICAS_LOGOS];

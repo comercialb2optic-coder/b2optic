@@ -33,7 +33,7 @@ const MESH_BLOBS: MeshBlob[] = [
     baseY: 0.32,
     radius: 0.55,
     color: PRIMARY_RGB,
-    alpha: 0.2,
+    alpha: 0.24,
     speedX: 0.000075,
     speedY: 0.00011,
     phaseX: 0,
@@ -46,7 +46,7 @@ const MESH_BLOBS: MeshBlob[] = [
     baseY: 0.7,
     radius: 0.5,
     color: '255, 255, 255',
-    alpha: 0.1,
+    alpha: 0.11,
     speedX: 0.00009,
     speedY: 0.00007,
     phaseX: 2.1,
@@ -59,7 +59,7 @@ const MESH_BLOBS: MeshBlob[] = [
     baseY: 0.5,
     radius: 0.65,
     color: PRIMARY_RGB,
-    alpha: 0.16,
+    alpha: 0.2,
     speedX: 0.00006,
     speedY: 0.00012,
     phaseX: 3.4,
@@ -357,9 +357,9 @@ function StaticMesh() {
       className="absolute inset-0"
       style={{
         background: `
-          radial-gradient(circle at 22% 32%, rgba(0, 85, 255, 0.2), transparent 55%),
-          radial-gradient(circle at 78% 70%, rgba(255, 255, 255, 0.1), transparent 50%),
-          radial-gradient(circle at 50% 50%, rgba(0, 85, 255, 0.16), transparent 65%)
+          radial-gradient(circle at 22% 32%, rgba(0, 85, 255, 0.24), transparent 55%),
+          radial-gradient(circle at 78% 70%, rgba(255, 255, 255, 0.11), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(0, 85, 255, 0.20), transparent 65%)
         `,
       }}
     />

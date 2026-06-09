@@ -1,6 +1,10 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+// Logo do header — teste azul+prata. Reverter trocando pela linha comentada abaixo.
+const HEADER_LOGO_SRC = '/oticas/b2optic-logo-azul-prata.png';
+// const HEADER_LOGO_SRC = '/b2optic-logo-branca.png';
+
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -31,7 +35,7 @@ export default function Header() {
           className="inline-flex items-center transition-opacity duration-300 hover:opacity-90"
         >
           <img
-            src="/b2optic-logo-branca.png"
+            src={HEADER_LOGO_SRC}
             alt="B2Optic"
             className="h-9 sm:h-11 lg:h-12 w-auto select-none"
             draggable={false}
