@@ -1,46 +1,70 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { EASE_OUT_QUINT } from '@/components/motion';
+import { NAV } from '@/content';
 
-// Logo do header — teste azul+prata. Reverter trocando pela linha comentada abaixo.
-const HEADER_LOGO_SRC = '/oticas/b2optic-logo-azul-prata.png';
-// const HEADER_LOGO_SRC = '/b2optic-logo-branca.png';
+// Monograma "B2" — recortado justo do arquivo original, que vinha com ~95% de
+// área vazia em volta da marca. Proporção 3,6:1 (o wordmark completo é ~5,9:1),
+// então ocupa bem menos largura no cabeçalho.
+// Para voltar ao wordmark completo: '/b2optic-logo.png'.
+const HEADER_LOGO_SRC = '/b2optic-monograma.png';
+const HEADER_LOGO_ALT = 'B2Optic';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 24);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ${
         isScrolled
-          ? 'bg-background/70 backdrop-blur-xl border-b border-border/60'
-          : 'bg-transparent border-b border-transparent'
+          ? 'border-b border-line bg-background/85 backdrop-blur-xl'
+          : 'border-b border-transparent bg-transparent'
       }`}
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex items-center justify-center">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
         <a
           href="/"
           aria-label="B2Optic — voltar ao topo"
-          className="inline-flex items-center transition-opacity duration-300 hover:opacity-90"
+          className="inline-flex shrink-0 items-center transition-opacity duration-300 hover:opacity-70"
         >
           <img
             src={HEADER_LOGO_SRC}
-            alt="B2Optic"
-            className="h-9 sm:h-11 lg:h-12 w-auto select-none"
+            alt={HEADER_LOGO_ALT}
+            width={86}
+            height={24}
+            className="h-[22px] w-auto select-none sm:h-6"
             draggable={false}
           />
         </a>
+
+        <nav
+          aria-label="Navegação principal"
+          className="hidden items-center gap-8 md:flex"
+        >
+          {NAV.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => scrollTo(item.id)}
+              className="text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-primary"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
       </div>
     </motion.header>
   );

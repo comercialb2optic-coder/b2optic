@@ -1,25 +1,45 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* ============================================================================
+   B2Optic — Sistema de tema CLARO com blocos escuros de respiro.
+
+   Regra: o componente NUNCA escreve hex. Só usa token (bg-surface, text-heading,
+   border-line). As seções escuras (Ferramentas, Painel CRM) recebem a classe
+   .section-dark, que redefine os mesmos tokens localmente — por isso o JSX
+   dentro delas continua escrevendo bg-background / text-heading normalmente.
+
+   Referência completa: .claude/skills/b2optic-design/SKILL.md
+   ========================================================================== */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Tokens B2Optic */
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --color-card: var(--card);
+  --color-heading: var(--heading);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-on-dark: var(--primary-on-dark);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* Tokens exigidos pelos componentes shadcn em components/ui — não remover */
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
@@ -43,91 +63,110 @@
 }
 
 :root {
-  --primary: #0055FF;
-  --primary-foreground: #ffffff;
-  --sidebar-primary: #0055FF;
-  --sidebar-primary-foreground: #ffffff;
-  --chart-1: #0055FF;
-  --chart-2: #0055FF;
-  --chart-3: #0055FF;
-  --chart-4: #0055FF;
-  --chart-5: #0055FF;
-  --radius: 0.5rem;
-  --background: #08080F;
-  --foreground: #C8C8D0;
-  --card: #0A0A0A;
-  --card-foreground: #ffffff;
-  --popover: #0A0A0A;
-  --popover-foreground: #ffffff;
-  --secondary: #111111;
-  --secondary-foreground: #C8C8D0;
-  --muted: #1A1A24;
-  --muted-foreground: #B0B0B8;
-  --accent: #0055FF;
-  --accent-foreground: #ffffff;
-  --destructive: #FF4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.05);
-  --ring: #0055FF;
-  --sidebar: #08080F;
-  --sidebar-foreground: #C8C8D0;
-  --sidebar-accent: #0055FF;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #0055FF;
+  /* ---- Superfícies (claro) ----
+     surface é o cinza-frio das seções alternadas. Em #F6F8FC ele praticamente
+     não se separava do branco; #F1F4FA dá a alternância sem escurecer a
+     página nem competir com o conteúdo. */
+  --background: #ffffff;
+  --surface: #f1f4fa;
+  --card: #ffffff;
 
-  /* Typography tokens */
-  --tracking-tight: -0.02em;
-  --tracking-headline: -0.025em;
+  /* ---- Texto ---- */
+  --heading: #0b1220;
+  --foreground: #3f4655;
+  --muted-foreground: #6b7385;
+
+  /* ---- Linhas ---- */
+  --line: #e4e8f0;
+  --line-strong: #d3dae7;
+
+  /* ---- Azul B2Optic ----
+     #0055FF sobre branco = 5,6:1 (passa AA para texto normal).
+     #0055FF sobre o fundo escuro = 3,5:1 (NÃO passa) — por isso existe
+     --primary-on-dark, usado para texto azul dentro de .section-dark. */
+  --primary: #0055ff;
+  --primary-hover: #0047d6;
+  --primary-soft: #eef3ff;
+  --primary-on-dark: #4d8aff;
+  --primary-foreground: #ffffff;
+
+  /* ---- Paleta escura (consumida por .section-dark) ---- */
+  --dark-bg: #080b14;
+  --dark-surface: #0f1420;
+  --dark-heading: #ffffff;
+  --dark-foreground: #a8b0c0;
+  --dark-muted-foreground: #7b8497;
+  --dark-line: rgba(255, 255, 255, 0.09);
+  --dark-line-strong: rgba(255, 255, 255, 0.18);
+
+  --radius: 0.75rem;
+
+  /* ---- Compatibilidade shadcn ---- */
+  --card-foreground: var(--heading);
+  --popover: #ffffff;
+  --popover-foreground: var(--heading);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--heading);
+  --muted: var(--surface);
+  --accent: var(--primary-soft);
+  --accent-foreground: var(--primary);
+  --destructive: #d92d20;
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--primary);
+  --chart-1: #0055ff;
+  --chart-2: #4d8aff;
+  --chart-3: #99bcff;
+  --chart-4: #0b1220;
+  --chart-5: #6b7385;
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--primary-soft);
+  --sidebar-accent-foreground: var(--primary);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--primary);
+
+  /* ---- Tipografia ---- */
+  --tracking-tight: -0.025em;
+  --tracking-headline: -0.03em;
   --tracking-eyebrow: 0.14em;
   --leading-headline: 1.05;
   --leading-body: 1.65;
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.dark {
-  --primary: #0055FF;
-  --primary-foreground: #ffffff;
-  --sidebar-primary: #0055FF;
-  --sidebar-primary-foreground: #ffffff;
-  --background: #08080F;
-  --foreground: #C8C8D0;
-  --card: #0A0A0A;
-  --card-foreground: #ffffff;
-  --popover: #0A0A0A;
-  --popover-foreground: #ffffff;
-  --secondary: #111111;
-  --secondary-foreground: #C8C8D0;
-  --muted: #1A1A24;
-  --muted-foreground: #B0B0B8;
-  --accent: #0055FF;
-  --accent-foreground: #ffffff;
-  --destructive: #FF4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.05);
-  --ring: #0055FF;
-  --chart-1: #0055FF;
-  --chart-2: #0055FF;
-  --chart-3: #0055FF;
-  --chart-4: #0055FF;
-  --chart-5: #0055FF;
-  --sidebar: #08080F;
-  --sidebar-foreground: #C8C8D0;
-  --sidebar-accent: #0055FF;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #0055FF;
+/* ============================================================================
+   Bloco escuro de respiro.
+   Redefine os MESMOS tokens no escopo da seção, então o JSX interno continua
+   usando bg-background / text-heading / border-line sem saber que mudou.
+   ========================================================================== */
+.section-dark {
+  --background: var(--dark-bg);
+  --surface: var(--dark-surface);
+  --card: var(--dark-surface);
+  --heading: var(--dark-heading);
+  --foreground: var(--dark-foreground);
+  --muted-foreground: var(--dark-muted-foreground);
+  --line: var(--dark-line);
+  --line-strong: var(--dark-line-strong);
+  --card-foreground: var(--dark-heading);
+
+  background-color: var(--dark-bg);
+  color: var(--dark-foreground);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-line outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -143,23 +182,14 @@
 
 @layer components {
   /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
+   * Container centralizado com padding responsivo.
+   * Para larguras específicas, prefira max-w-* direto no elemento.
    */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
   }
 
@@ -170,24 +200,27 @@
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
+      padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem; /* 32px - desktop padding */
+      padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+      max-width: 1280px;
     }
   }
 }
 
-/* Typography System */
+/* ============================================================================
+   Tipografia
+   ========================================================================== */
 html,
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
 }
 
 button,
@@ -203,53 +236,41 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1,
+h2,
+h3 {
+  color: var(--heading);
+}
+
 h1 {
   font-weight: 600;
-  color: #ffffff;
   letter-spacing: var(--tracking-headline);
   line-height: var(--leading-headline);
 }
 
 h2 {
   font-weight: 600;
-  color: #ffffff;
   letter-spacing: var(--tracking-tight);
   line-height: 1.1;
 }
 
 h3 {
   font-weight: 600;
-  color: #ffffff;
   letter-spacing: -0.01em;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
-/* Glassmorphism Effect */
-.glass {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* Neon Glow Effect */
-.neon-glow {
-  box-shadow: 0 0 20px rgba(0, 85, 255, 0.3);
-}
-
-.neon-glow-hover:hover {
-  box-shadow: 0 0 30px rgba(0, 85, 255, 0.5);
-  transition: box-shadow 300ms ease-out;
-}
-
-/* Button Styles — pill premium (Laks-inspired, B2Optic azul) */
+/* ============================================================================
+   Botões
+   ========================================================================== */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 2rem;
+  min-height: 3rem;
+  padding: 0.875rem 1.75rem;
   background-color: var(--primary);
-  color: #ffffff;
+  color: var(--primary-foreground);
   font-weight: 600;
   font-size: 0.9375rem;
   border-radius: 9999px;
@@ -259,81 +280,70 @@ h3 {
     transform 320ms var(--ease-out-quint),
     box-shadow 320ms var(--ease-out-quint),
     background-color 320ms var(--ease-out-quint);
-  box-shadow:
-    0 6px 16px -6px rgba(0, 85, 255, 0.55),
-    0 2px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 16px -8px rgba(0, 85, 255, 0.5);
   will-change: transform;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  background-color: #1865ff;
-  box-shadow:
-    0 22px 48px -14px rgba(0, 85, 255, 0.7),
-    0 10px 24px -10px rgba(0, 85, 255, 0.45);
+  background-color: var(--primary-hover);
+  box-shadow: 0 18px 32px -14px rgba(0, 85, 255, 0.55);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow:
-    0 8px 18px -6px rgba(0, 85, 255, 0.5);
+  box-shadow: 0 6px 14px -8px rgba(0, 85, 255, 0.5);
 }
 
 .btn-primary:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 3px rgba(0, 85, 255, 0.35),
-    0 18px 40px -14px rgba(0, 85, 255, 0.6);
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 .btn-primary:disabled,
 .btn-primary[aria-disabled="true"] {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Secondary pill — outline branco, compacto, contraste com o primário */
+/* Secundário — outline discreto. Herda a cor do contexto, então funciona
+   igual no claro e dentro de .section-dark. */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 2.75rem;
   padding: 0.625rem 1.25rem;
   background-color: transparent;
-  color: #ffffff;
+  color: var(--heading);
   font-weight: 500;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   letter-spacing: -0.005em;
   line-height: 1.2;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--line-strong);
   border-radius: 9999px;
   transition:
-    transform 320ms var(--ease-out-quint),
-    border-color 320ms var(--ease-out-quint),
-    color 320ms var(--ease-out-quint),
-    background-color 320ms var(--ease-out-quint);
+    border-color 240ms var(--ease-out-quint),
+    background-color 240ms var(--ease-out-quint);
 }
 
 .btn-secondary:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.45);
-  background-color: rgba(255, 255, 255, 0.04);
-  color: #ffffff;
-}
-
-.btn-secondary:active {
-  transform: translateY(0);
+  border-color: var(--primary);
+  background-color: var(--primary-soft);
+  color: var(--primary);
 }
 
 .btn-secondary:focus-visible {
-  outline: none;
-  border-color: rgba(0, 85, 255, 0.55);
-  box-shadow: 0 0 0 3px rgba(0, 85, 255, 0.12);
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 .btn-secondary:disabled,
 .btn-secondary[aria-disabled="true"] {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -342,78 +352,65 @@ h3 {
     transition:
       background-color 200ms ease,
       border-color 200ms ease,
-      color 200ms ease,
-      box-shadow 200ms ease;
+      color 200ms ease;
   }
   .btn-primary:hover,
-  .btn-secondary:hover,
-  .btn-primary:active,
-  .btn-secondary:active {
+  .btn-primary:active {
     transform: none;
   }
 }
 
-/* Card Styles */
-.card-glass {
+/* ============================================================================
+   Superfícies — no claro é BORDA que define o card, não sombra.
+   ========================================================================== */
+.card-surface {
   position: relative;
-  background-color: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 0.875rem;
-  padding: 1.75rem;
-  box-shadow: 0 0 0 0 transparent;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
   transition:
-    background-color 320ms var(--ease-out-quint),
-    border-color 320ms var(--ease-out-quint),
-    box-shadow 320ms var(--ease-out-quint);
+    border-color 240ms var(--ease-out-quint),
+    background-color 240ms var(--ease-out-quint);
 }
 
-.card-glass:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 18px 44px -18px rgba(0, 0, 0, 0.55);
+.card-surface:hover {
+  border-color: var(--line-strong);
 }
 
-/* Badge Pill Style */
+/* Card em destaque — borda azul, NUNCA fundo azul. */
+.card-surface-active {
+  border-color: var(--primary);
+  background-color: var(--primary-soft);
+}
+
+/* Sombra só para o que flutua de verdade (header sticky, modal, mockup 3D). */
+.elevated {
+  box-shadow: 0 24px 60px -24px rgba(11, 18, 32, 0.18);
+}
+
+/* ============================================================================
+   Elementos pequenos
+   ========================================================================== */
 .badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.4375rem 0.875rem;
-  background-color: rgba(0, 85, 255, 0.06);
-  border: 1px solid rgba(0, 85, 255, 0.18);
+  padding: 0.375rem 0.8125rem;
+  background-color: var(--primary-soft);
+  border: 1px solid transparent;
   border-radius: 2rem;
   color: var(--primary);
   font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0;
 }
 
-/* Spotlight Effect for Inputs */
-.spotlight-input {
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  padding: 0.875rem 1.125rem;
-  color: #ffffff;
-  font-size: 0.9375rem;
-  transition: border-color 250ms var(--ease-out-quint), box-shadow 250ms var(--ease-out-quint), background-color 250ms var(--ease-out-quint);
+.section-dark .badge-pill {
+  background-color: rgba(77, 138, 255, 0.12);
+  border-color: rgba(77, 138, 255, 0.24);
+  color: var(--primary-on-dark);
 }
 
-.spotlight-input:focus {
-  outline: none;
-  border-color: rgba(0, 85, 255, 0.55);
-  box-shadow: 0 0 0 3px rgba(0, 85, 255, 0.12);
-  background-color: rgba(255, 255, 255, 0.04);
-}
-
-.spotlight-input::placeholder {
-  color: rgba(161, 161, 170, 0.45);
-}
-
-/* Eyebrow label — small uppercase tag above headlines */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -425,62 +422,88 @@ h3 {
   color: var(--primary);
 }
 
-/* Text Gradient — palavras-chave em headlines (primary → mid blue → white).
-   background-size: 100% 100% + no-repeat impede o gradient de repetir por linha
-   em texto multi-line; display: inline-block isola o clip-path numa caixa só
-   (essencial pra não borrar quando há transform GPU em ancestral). */
-.text-gradient {
-  background-image: linear-gradient(135deg, #0055FF 0%, #4D8AFF 50%, #FFFFFF 100%);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
+.section-dark .eyebrow {
+  color: var(--primary-on-dark);
 }
 
-/* Silver Gradient — TESTE em textos secundários (cinza claro → branco → cinza, metal escovado) */
-.text-gradient-silver {
-  background-image: linear-gradient(
-    135deg,
-    #9CA3AF 0%,
-    #E5E7EB 25%,
-    #FFFFFF 50%,
-    #D1D5DB 75%,
-    #9CA3AF 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.spotlight-input {
+  width: 100%;
+  background-color: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: 0.625rem;
+  padding: 0.8125rem 1rem;
+  color: var(--heading);
+  font-size: 1rem;
+  transition:
+    border-color 200ms var(--ease-out-quint),
+    box-shadow 200ms var(--ease-out-quint);
 }
 
-/* Card Title Gradient — TESTE nos títulos dos passos (branco → prata → azul-prateado → azul).
-   Direção HORIZONTAL (to right) pra que o gradiente corra do começo ao fim da frase
-   do mesmo jeito em títulos de tamanhos diferentes. */
-.text-gradient-card {
-  background-image: linear-gradient(
-    to right,
-    #FFFFFF 0%,
-    #E5E7EB 30%,
-    #9FB5DC 65%,
-    #1865FF 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.spotlight-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 85, 255, 0.14);
 }
 
-/* Subtle horizontal divider between sections */
+/* #6B7385 sobre branco = 5,2:1. Placeholder apagado demais é falha de
+   acessibilidade, não escolha estética. */
+.spotlight-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.spotlight-input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.spotlight-input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.14);
+}
+
 .section-divider {
   height: 1px;
   width: 100%;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.08),
-    transparent
-  );
+  background-color: var(--line);
+}
+
+/* ============================================================================
+   DEPRECIADO — estética escura da versão anterior.
+
+   Neutralizadas em vez de removidas: vários componentes ainda referenciam
+   estas classes, e apagá-las deixaria texto transparente (invisível) durante
+   a migração. Conforme cada seção for convertida, remova a classe do JSX.
+   Ao final, este bloco inteiro sai.
+   ========================================================================== */
+.glass,
+.card-glass {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.card-glass {
+  padding: 1.5rem;
+  transition: border-color 240ms var(--ease-out-quint);
+}
+
+.card-glass:hover {
+  border-color: var(--line-strong);
+}
+
+.neon-glow,
+.neon-glow-hover:hover {
+  box-shadow: none;
+}
+
+/* Gradiente em headline é o tell nº1 de página feita por IA (skill de design,
+   seção 6). Neutralizado para cor sólida. */
+.text-gradient,
+.text-gradient-silver,
+.text-gradient-card {
+  background-image: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: var(--heading);
+  -webkit-text-fill-color: var(--heading);
 }

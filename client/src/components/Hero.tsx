@@ -1,170 +1,93 @@
 import { motion } from 'framer-motion';
-import WordReveal from '@/components/motion/WordReveal';
-import BlurFade from '@/components/motion/BlurFade';
+import { Check } from 'lucide-react';
+import { WordReveal, BlurFade, EASE_OUT_QUINT } from '@/components/motion';
+import SectionBackdrop from '@/components/SectionBackdrop';
+import CertificationBadges from '@/components/CertificationBadges';
+import LeadForm from '@/components/LeadForm';
+import { HERO, FORM } from '@/content';
 
-const EASE_OUT = [0.22, 1, 0.36, 1] as const;
-
+/**
+ * Estrutura emprestada da V4, que as duas referências seguem:
+ * filtro de público → promessa com o ano → subtítulo que já manda agendar →
+ * checks → selos → formulário. Sem botão de CTA: o próprio formulário é o CTA.
+ *
+ * O formulário aqui e o da seção do fim usam o mesmo `LeadForm`, cada um com
+ * estado próprio.
+ */
 export default function Hero() {
-  const scrollToForm = () => {
-    document
-      .getElementById('form-section')
-      ?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const scrollToCases = () => {
-    document.getElementById('cases')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <section
-      data-backdrop-theme="hero"
-      className="relative flex items-center justify-center overflow-hidden pt-28 pb-16 sm:min-h-screen sm:pb-20"
-    >
-      {/* Background image */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url('https://d2xsxph8kpxj0f.cloudfront.net/310519663538512901/kZM2v8qXuFHBjEWTxNfZYk/b2optic-hero-bg-oPMWKMdUzhf6n4sooowv7Z.webp')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+    <section className="relative overflow-hidden bg-background pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32">
+      <SectionBackdrop variant="rings" origin="30% 30%" />
+      <SectionBackdrop variant="glow" origin="50% 0%" />
 
-      {/* Tonal overlay — uniform darken */}
-      <div className="absolute inset-0 z-10 bg-background/70" />
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          {/* Coluna de conteúdo */}
+          <div>
+            <BlurFade delay={0.05} y={12}>
+              <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-muted-foreground sm:text-[13px]">
+                {HERO.qualifierPre}{' '}
+                <strong className="font-bold text-heading">
+                  {HERO.qualifierBold}
+                </strong>
+              </p>
+            </BlurFade>
 
-      {/* Bottom-fade overlay — section dies into background */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-background" />
+            <h1 className="mt-5 text-[36px] leading-[1.05] sm:text-[46px] lg:text-[54px]">
+              <WordReveal text={HERO.headlineBefore} delay={0.12} as="span" />{' '}
+              <WordReveal
+                text={HERO.highlight}
+                delay={0.3}
+                as="span"
+                className="text-primary"
+              />{' '}
+              <WordReveal text={HERO.headlineAfter} delay={0.42} as="span" />
+            </h1>
 
-      {/* Content */}
-      <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Stats card */}
-        <BlurFade
-          delay={0.05}
-          duration={0.6}
-          y={12}
-          className="mb-9 flex justify-center"
-        >
-          <div className="relative">
-            {/* Aurora glow — primary diluído atrás do card */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -inset-6 sm:-inset-8 rounded-full bg-primary/[0.08] blur-2xl"
-            />
+            <motion.p
+              className="mt-5 max-w-[52ch] text-[17px] leading-relaxed text-foreground"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.6, ease: EASE_OUT_QUINT }}
+            >
+              {HERO.subtitle}
+            </motion.p>
 
-            {/* Card */}
-            <div className="relative inline-flex items-center gap-5 sm:gap-7 overflow-hidden rounded-2xl border border-primary/15 bg-white/[0.03] px-5 py-3.5 sm:px-6 sm:py-4 backdrop-blur-md">
-              {/* Glass top reflex */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.06] to-transparent"
-              />
+            <motion.ul
+              className="mt-8 space-y-3.5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.72, ease: EASE_OUT_QUINT }}
+            >
+              {HERO.benefits.map((benefit) => (
+                <li key={benefit} className="flex items-start gap-3">
+                  <span
+                    aria-hidden
+                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-white"
+                  >
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  <span className="text-[15px] leading-snug text-foreground sm:text-[16px]">
+                    {benefit}
+                  </span>
+                </li>
+              ))}
+            </motion.ul>
 
-              {/* Stat 1 — número-herói em primary */}
-              <div className="relative flex flex-col items-center text-center">
-                <span className="text-[22px] sm:text-[26px] font-bold leading-none tracking-[-0.03em] text-primary tabular-nums">
-                  +R$ 13M
-                </span>
-                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-gradient-silver sm:text-[11px] sm:tracking-[0.12em]">
-                  em vendas geradas
-                </span>
-              </div>
-
-              {/* Vertical divider */}
-              <span
-                aria-hidden
-                className="relative h-8 w-px bg-gradient-to-b from-transparent via-white/15 to-transparent"
-              />
-
-              {/* Stat 2 — branco forte */}
-              <div className="relative flex flex-col items-center text-center">
-                <span className="text-[22px] sm:text-[26px] font-bold leading-none tracking-[-0.03em] text-card-foreground tabular-nums">
-                  +200
-                </span>
-                <span className="mt-2 text-[10px] font-medium uppercase tracking-[0.10em] text-gradient-silver sm:text-[11px] sm:tracking-[0.12em]">
-                  óticas aceleradas
-                </span>
-              </div>
-            </div>
+            <BlurFade delay={0.86} y={14} className="mt-9">
+              <CertificationBadges size="compact" align="left" />
+            </BlurFade>
           </div>
-        </BlurFade>
 
-        {/* Headline — WordReveal palavra-por-palavra, gradient nas keywords */}
-        <h1 className="text-[36px] sm:text-5xl lg:text-[60px] font-semibold mb-7 tracking-[-0.025em] leading-[1.05] text-foreground">
-          <span className="block">
-            <WordReveal
-              text="Aumentamos o"
-              delay={0.15}
-              duration={0.6}
-              as="span"
-            />{' '}
-            <WordReveal
-              text="faturamento"
-              delay={0.3}
-              duration={0.6}
-              as="span"
-              className="text-gradient"
-            />
-          </span>
-          <WordReveal
-            text="da sua ótica com uma estrutura"
-            delay={0.45}
-            duration={0.6}
-            as="span"
-            className="block"
-          />
-          <span className="block">
-            <WordReveal
-              text="validada de"
-              delay={0.62}
-              duration={0.6}
-              as="span"
-            />{' '}
-            <WordReveal
-              text="marketing e vendas"
-              delay={0.76}
-              duration={0.6}
-              as="span"
-              className="text-gradient"
-            />
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <motion.p
-          className="text-[17px] sm:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0, ease: EASE_OUT }}
-        >
-          Unimos estratégia, tecnologia e execução pra atrair clientes certos,
-          conectar marketing e equipe de vendas e transformar isso em mais
-          óculos vendidos no balcão.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          className="flex flex-col items-center gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.2, ease: EASE_OUT }}
-        >
-          <button
-            type="button"
-            onClick={scrollToForm}
-            className="btn-primary"
+          {/* Formulário — o CTA da dobra. No mobile cai abaixo do conteúdo. */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: EASE_OUT_QUINT }}
           >
-            Quero escalar minha ótica
-          </button>
-
-          <button
-            type="button"
-            onClick={scrollToCases}
-            className="btn-secondary"
-          >
-            Ver cases
-          </button>
-        </motion.div>
+            <LeadForm title={FORM.heroTitle} subtitle={FORM.heroSubtitle} />
+          </motion.div>
+        </div>
       </div>
     </section>
   );

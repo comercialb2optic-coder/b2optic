@@ -1,102 +1,97 @@
 # B2Optic Landing Page — Contexto do Projeto
 
-## Sobre o projeto
-Landing page de captação de leads da **B2Optic**, uma aceleradora de vendas para óticas (lojas de óculos). A página recebe tráfego pago do Meta Ads, qualifica o lead via formulário/aplicação, e gera reunião comercial.
+## Sobre
 
-**Público-alvo:** donos de ótica no Brasil, geralmente entre 35-60 anos, faturamento de R$30k a R$500k/mês, com baixa intimidade técnica mas alta capacidade de avaliar uma marca premium vs amadora.
+Landing page de captação da **B2Optic**, aceleradora de vendas para óticas. Recebe tráfego pago do Meta Ads, qualifica o lead num formulário de 3 etapas e gera reunião comercial.
 
-**Posicionamento:** premium, autoridade, ROI concreto. Não somos agência de tráfego — somos aceleradora de vendas com método próprio.
+**Público:** dono de ótica, 35-60 anos, fatura de R$30k a R$500k/mês. Baixa intimidade técnica, alta capacidade de julgar se a marca é séria. Provavelmente já foi queimado por agência de tráfego.
+
+**Posicionamento:** aceleradora de vendas com método próprio. Não é agência de tráfego.
+
+## ⚠️ Leia as skills antes de mexer
+
+Este projeto tem quatro skills em `.claude/skills/`. Elas são a fonte de verdade, não este arquivo:
+
+| Skill | Quando ler |
+|---|---|
+| `b2optic-design` | antes de qualquer JSX de seção, cor, espaçamento ou animação |
+| `b2optic-copy` | antes de escrever headline, texto de card, label ou CTA |
+| `b2optic-dev` | antes de criar componente, editar seção ou tocar no Home.tsx |
+| `b2optic-qa` | antes de dizer que algo está pronto |
+
+E três agentes em `.claude/agents/`: `lp-section-builder`, `lp-design-review`, `lp-qa`.
 
 ## Stack
-- **React 19** + **TypeScript** + **Vite**
-- **Tailwind CSS v4** (config em `client/src/index.css` via `@theme`)
-- **Framer Motion** para animações
-- **shadcn/ui** + **Radix UI** para componentes base
-- **React Hook Form** + **Zod** para formulários
-- **pnpm** como gerenciador de pacotes
+
+React 19 · TypeScript · Vite · Tailwind v4 · Framer Motion · shadcn/ui · react-hook-form + Zod · **pnpm**
+
+Não existe `tailwind.config.js` — os tokens ficam em `client/src/index.css` dentro de `@theme`.
+
+```bash
+pnpm dev      # → http://localhost:3000
+pnpm check    # tsc --noEmit — obrigatório antes de concluir qualquer tarefa
+pnpm build
+```
+
+## Tema: claro com blocos escuros
+
+A página é **clara**. Duas seções são escuras de propósito, como respiro visual: `ToolsOrbit` e `PerformancePanel`.
+
+O mecanismo: a classe `.section-dark` **redefine os mesmos tokens no escopo da seção**. Por isso o JSX dentro dela continua escrevendo `bg-background` / `text-heading` / `border-line` normalmente — não existe componente duplicado para claro e escuro.
+
+A única exceção: **texto azul dentro do bloco escuro usa `text-primary-on-dark`**, não `text-primary`. `#0055FF` sobre `#080B14` dá 3,5:1 de contraste e reprova em acessibilidade; `#4D8AFF` dá 5,9:1.
+
+Paleta completa e regras anti-cara-de-IA: `.claude/skills/b2optic-design/SKILL.md`.
 
 ## Estrutura
+
 ```
 client/src/
-├── pages/Home.tsx              # Página principal (importa todos os componentes)
+├── pages/Home.tsx        # só a ordem das seções e a alternância de fundo
+├── content.ts            # TODO texto e número da página — fonte única
+├── lib/submitLead.ts     # único ponto de envio do formulário
 ├── components/
-│   ├── Header.tsx              # Cabeçalho com logo + CTA
-│   ├── Hero.tsx                # Seção hero com headline principal
-│   ├── ClientsCarousel.tsx     # Carrossel infinito de logos de clientes
-│   ├── Ecosystem.tsx           # 3 cards: Triagem, Agendamento, Treinamento
-│   ├── Certifications.tsx      # Selo Google/Meta + 5 passos
-│   ├── Map.tsx                 # Mapa/depoimentos de óticas
-│   ├── Guarantee.tsx           # Bullets de garantia
-│   ├── DiagnosticForm.tsx      # Formulário de aplicação/diagnóstico
-│   └── Footer.tsx              # Rodapé
-└── index.css                   # Variáveis de tema (cores, raio, etc)
+│   ├── motion/           # BlurFade, WordReveal, CountUp, StaggerGroup, EASE_OUT_QUINT
+│   └── ui/               # shadcn — não editar à mão
+└── index.css             # tokens (@theme) + .section-dark + utilitários
 ```
 
-## Paleta de cores (NÃO ALTERAR — usar SEMPRE via variável CSS)
-- `--background: #050505` (fundo principal, quase preto)
-- `--card: #0A0A0A` (cards sobre o fundo)
-- `--secondary: #111111` (seções alternadas)
-- `--primary: #0055FF` (azul B2Optic — usar com moderação, só destaque)
-- `--foreground: #A1A1AA` (texto principal)
-- `--card-foreground: #ffffff` (títulos)
-- `--muted-foreground: #71717A` (texto secundário)
-- `--border: rgba(255, 255, 255, 0.08)` (bordas sutis)
+`client/src/const.ts` é sobra do template (helper de OAuth). Ignore.
 
-**Sempre referencie via `bg-background`, `text-foreground`, `border-border` etc. Nunca hardcode hex.**
+### Ordem das seções
 
-## Diretrizes de design — Estética Premium
+Hero → ClientsCarousel → DiagnosticPreview → Cases → **ToolsOrbit (escuro)** → Methodology → **PerformancePanel (escuro)** → Onboarding → CtaBanner → Numbers → Qualification → About → DiagnosticForm → Footer
 
-A estética atual é funcional mas tem "cara de IA": gradientes genéricos, glassmorphism padrão, animações óbvias. O objetivo é elevar pra parecer feita por um estúdio sênior, mantendo cores e estrutura.
+Os fundos alternam de forma que nenhuma seção encoste em outra da mesma cor. Ao inserir uma seção nova, confira a vizinhança.
 
-### Princípios
-1. **Tipografia é o ativo principal.** Hierarquia com peso e tracking, não com gradient text colorido. Headlines em peso 600-700 com tracking levemente negativo (-0.02em). Subheadings em 400-500.
-2. **Espaço respira.** Padding generoso entre seções (mínimo `py-24 md:py-32`). Largura máxima de conteúdo `max-w-6xl` ou `max-w-7xl`.
-3. **Bordas sutis substituem cards berrantes.** Use `border border-border/50` com `bg-card/40` ao invés de cards opacos.
-4. **Glassmorphism com moderação.** `backdrop-blur` só em elementos flutuantes (header sticky, modais). Não em cards de seção.
-5. **Animação serve o conteúdo.** Entradas com `fadeInUp` (y: 20, opacity: 0 → y: 0, opacity: 1, duração 0.6s, ease `[0.22, 1, 0.36, 1]`). Stagger em listas (delay 0.08s entre itens). Nada de bounce, spring exagerado ou rotation gratuita.
-6. **Azul primary é tempero, não pintura.** Usar em CTAs, ícones de destaque, números de stats — nunca em backgrounds grandes, nunca em texto longo.
-7. **Microdetalhes:** linha-divisória de 1px com gradiente sutil entre seções, ring quase imperceptível em hover de cards (`hover:ring-1 hover:ring-white/10`), shadow só onde faz sentido físico (cards flutuantes, modal).
+## Conteúdo
 
-### O que evitar (cara de IA)
-- ❌ Gradient text colorido (`bg-clip-text` com cores berrantes)
-- ❌ Emoji decorativo nos títulos
-- ❌ Cards com gradient background colorido
-- ❌ Animações de "magic sparkles", confetti, partículas
-- ❌ Headlines com 4+ tamanhos diferentes na mesma seção
-- ❌ Mais de 2 pesos de fonte na mesma view
+**Nenhuma string de conteúdo e nenhum número dentro de `.tsx`.** Tudo em `client/src/content.ts`. Um número existe em um lugar só — hero e seção de Números importam a mesma constante, então não têm como divergir.
 
-### O que abraçar (premium)
-- ✅ Tipografia única e bem trabalhada (font feature settings, kerning, leading apertado em headlines, leading folgado em body)
-- ✅ Números grandes como elementos visuais (`+R$ 13M`, `+200`, `+45%`)
-- ✅ Bordas com gradiente sutil em cards selecionados
-- ✅ Reveals com timing musical (stagger consistente)
-- ✅ Estado vazio com personalidade (skeleton elegante, não spinner)
-- ✅ Detalhes de baixo contraste que recompensam o olhar atento
+## Formulário
 
-## Convenções de código
-- Componentes em **PascalCase**, arquivos `.tsx`
-- Hooks customizados em `client/src/hooks/`
-- Tipos compartilhados em `shared/`
-- Imports absolutos via `@/` (configurado em `tsconfig.json`)
-- Tailwind: ordenar classes por categoria (layout → spacing → typography → color → effects)
-- Framer Motion: extrair `variants` em const fora do componente quando o objeto for reutilizado
+3 etapas (identificação → faturamento → experiência com anúncios), react-hook-form + Zod.
 
-## Como executar
-```bash
-pnpm dev          # rodar em desenvolvimento (porta 5173)
-pnpm build        # build de produção
-pnpm preview      # testar o build localmente
-pnpm check        # checar tipos TypeScript
-```
+O card vive em `components/LeadForm.tsx` e aparece em **dois lugares**: dentro do hero (o CTA da dobra — o hero não tem botão) e na seção `DiagnosticForm` do fim da página. Cada instância tem estado próprio, de propósito. Ao mexer no formulário, mexa só no `LeadForm` — as duas posições herdam.
 
-## Fluxo de trabalho com Claude Code
-1. Sempre que for fazer mudança visual, **antes leia o componente atual** com `view` para entender o estado.
-2. Mudanças grandes (refatorar uma seção inteira): proponha o plano primeiro, espere o ok, depois execute.
-3. Após mudanças, **rodar `pnpm check`** para garantir que não quebrou tipos.
-4. Nunca instalar dependências novas sem perguntar — o stack já está completo pra 90% das necessidades.
+O envio passa por `client/src/lib/submitLead.ts`, que lê `VITE_LEAD_WEBHOOK_URL`. Ele também normaliza o WhatsApp para o formato do CRM e captura UTM/fbclid/gclid da URL — o tráfego vem de anúncio, então saber de qual anúncio veio o lead importa tanto quanto o lead.
 
-## Próximas fases (não fazer agora, só contexto)
-- Fase 2: Formulário de aplicação multi-etapa com perguntas de qualificação real
-- Fase 3: Pixel do Meta + GA4 + eventos de conversão
-- Fase 4: Otimização de performance (Lighthouse 95+ em mobile)
-- Fase 5: Deploy (Vercel ou similar)
+**Sem a variável definida, o envio falha de propósito e mostra erro na tela.** Isso é intencional: o pior cenário possível é a tela de sucesso aparecer e o lead não existir em lugar nenhum. Copie `.env.example` para `.env.local` para configurar.
+
+## Pendências conhecidas
+
+- [ ] `VITE_LEAD_WEBHOOK_URL` não configurada — formulário ainda não entrega lead
+- [ ] `ONBOARDING_SECTION.steps` em `content.ts` é **conteúdo provisório**, deduzido do app e da metodologia. Precisa das etapas reais antes de publicar
+- [ ] Logos das ferramentas do `ToolsOrbit` — os nós renderizam o nome em tipografia. Basta colocar arquivo em `public/ferramentas/` e preencher o campo `logo` de cada item
+- [ ] Google e n8n em `TOOLS_SECTION.tools` estão com `confirmed: false` — confirmar se entram
+- [ ] Links de redes sociais em `SOCIAL` (`content.ts`) apontam para `#`, e o WhatsApp está como `wa.me/55XXXXXXXXXXX`
+- [ ] `Cases` carrega 5 iframes do YouTube — pesa no mobile. Avaliar troca por thumbnail com play
+- [ ] `ManusDialog.tsx` é código morto (sobra do template, "Login with Manus"), não é importado em lugar nenhum
+- [ ] `OpticalBackdrop.tsx` está fora do Home. Era o mesh azul de tela cheia que afogava a página no claro. Pode ser reaproveitado **dentro** dos blocos escuros
+- [ ] Bloco `DEPRECIADO` no fim do `index.css` neutraliza classes da versão escura (`.text-gradient`, `.card-glass`, `.neon-glow`). Nenhum componente de seção usa mais — pode ser removido
+
+## Imagens do painel
+
+`public/painel/painel-desktop.jpg` e `painel-mobile.jpg` são recortes de screenshots do app **B2Performance**, da rede fictícia "Multfoco" usada no modo preview.
+
+**São dados de demonstração e devem continuar sendo.** Nunca substitua por print de cliente real — expõe faturamento e investimento de terceiro numa página pública. A seção exibe o aviso "Dados de demonstração" por isso.

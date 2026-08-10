@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { CLIENTS_SECTION } from '@/content';
 
 const OPTICAS_LOGOS = [
   { id: 1, name: 'Ótica Ipanema', url: '/oticas/otica-ipanema.png' },
@@ -20,39 +21,57 @@ const OPTICAS_LOGOS = [
 
 const DUPLICATED_LOGOS = [...OPTICAS_LOGOS, ...OPTICAS_LOGOS];
 
-export default function ClientsCarousel() {
-  return (
-    <section
-      data-backdrop-theme="hero"
-      className="relative overflow-hidden py-8 sm:py-10 md:py-12"
-    >
-      <div className="relative overflow-hidden">
-        {/* Side fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-20 w-24 bg-gradient-to-r from-background to-transparent sm:w-40" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-20 w-24 bg-gradient-to-l from-background to-transparent sm:w-40" />
+/**
+ * Os PNGs das logos são arte BRANCA sobre fundo transparente — foram feitos
+ * para o tema escuro e sumiriam por completo no branco. Como são todos
+ * monocromáticos, `invert` os converte em arte preta sem precisar de arquivo
+ * novo. Se algum dia entrar uma logo COLORIDA nesta lista, o invert vai
+ * distorcer as cores dela e o arquivo precisará vir já em versão escura.
+ */
+const LOGO_FILTER = 'invert(1) opacity(0.55)';
 
-        {/* Track */}
+export default function ClientsCarousel() {
+  const reduced = useReducedMotion();
+
+  return (
+    <section className="overflow-hidden border-y border-line bg-surface py-14 sm:py-16">
+      <h2 className="mb-10 text-center text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        {CLIENTS_SECTION.title}
+      </h2>
+
+      <div className="relative overflow-hidden">
+        {/* Máscaras laterais — precisam casar com o fundo da seção (surface). */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-surface to-transparent sm:w-32" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-l from-surface to-transparent sm:w-32" />
+
         <motion.div
-          className="flex w-max items-center gap-16 py-4 sm:gap-20"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{
-            duration: 110,
-            repeat: Infinity,
-            ease: 'linear',
-            repeatType: 'loop',
-          }}
+          className={`flex w-max items-center gap-14 py-2 sm:gap-20 ${
+            reduced ? 'flex-wrap justify-center' : ''
+          }`}
+          animate={reduced ? undefined : { x: ['0%', '-50%'] }}
+          transition={
+            reduced
+              ? undefined
+              : {
+                  duration: 110,
+                  repeat: Infinity,
+                  ease: 'linear',
+                  repeatType: 'loop',
+                }
+          }
         >
-          {DUPLICATED_LOGOS.map((logo, index) => (
+          {(reduced ? OPTICAS_LOGOS : DUPLICATED_LOGOS).map((logo, index) => (
             <div
               key={`${logo.id}-${index}`}
-              className="flex h-10 flex-shrink-0 items-center justify-center sm:h-12 md:h-14"
+              className="flex h-8 flex-shrink-0 items-center justify-center sm:h-10"
             >
               <img
                 src={logo.url}
                 alt={logo.name}
                 loading="lazy"
                 draggable={false}
-                className="h-full w-auto object-contain opacity-70"
+                className="h-full w-auto object-contain"
+                style={{ filter: LOGO_FILTER }}
               />
             </div>
           ))}
