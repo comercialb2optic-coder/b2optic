@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { EASE_OUT_QUINT, useIsMobile } from '@/components/motion';
+import { EASE_OUT_QUINT } from '@/components/motion';
 import { TOOLS_SECTION } from '@/content';
 
 const SIZE = 760;
@@ -55,7 +55,6 @@ function tubePath(node: NodePos, bend: number): string {
 }
 
 export default function ToolsOrbit() {
-  const isMobile = useIsMobile();
   const reduced = useReducedMotion();
 
   return (
@@ -82,8 +81,11 @@ export default function ToolsOrbit() {
           </p>
         </motion.div>
 
+        {/* O orbital roda em toda largura. A grade de texto que existia aqui
+            só fazia sentido quando o nó era o nome em tipografia, que virava
+            6px no celular — agora o nó é logo, e logo continua legível pequena. */}
         <div className="relative">
-          {isMobile ? <ToolsGrid /> : <Orbit reduced={!!reduced} />}
+          <Orbit reduced={!!reduced} />
         </div>
       </div>
     </section>
@@ -167,12 +169,16 @@ function Orbit({ reduced }: { reduced: boolean }) {
                 strokeWidth={1}
               />
               {tool.logo ? (
+                // Caixa de 1,2r. A diagonal de um quadrado desse lado alcança
+                // 0,85r do centro, então até a logo mais quadrada (Instagram)
+                // ainda sobra margem pra borda do nó. Meio raio deixava a logo
+                // em 16px no celular — irreconhecível.
                 <image
                   href={tool.logo}
-                  x={node.x - node.r * 0.5}
-                  y={node.y - node.r * 0.5}
-                  width={node.r}
-                  height={node.r}
+                  x={node.x - node.r * 0.6}
+                  y={node.y - node.r * 0.6}
+                  width={node.r * 1.2}
+                  height={node.r * 1.2}
                   preserveAspectRatio="xMidYMid meet"
                 />
               ) : (
@@ -222,23 +228,3 @@ function Orbit({ reduced }: { reduced: boolean }) {
   );
 }
 
-/** No mobile o orbital fica ilegível (texto do nó vira 6px). Vira grade. */
-function ToolsGrid() {
-  return (
-    <ul className="grid grid-cols-2 gap-3">
-      {TOOLS_SECTION.tools.map((tool) => (
-        <li
-          key={tool.id}
-          className="rounded-xl border border-line bg-card px-4 py-3.5"
-        >
-          <span className="block text-[15px] font-semibold text-heading">
-            {tool.label}
-          </span>
-          <span className="block text-[13px] text-muted-foreground">
-            {tool.note}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}

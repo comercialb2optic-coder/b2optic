@@ -5,7 +5,6 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import { useRef } from 'react';
-import { useIsMobile } from './useIsMobile';
 
 export function useParallax(speed: number = 0.2): {
   ref: React.RefObject<HTMLDivElement | null>;
@@ -13,14 +12,15 @@ export function useParallax(speed: number = 0.2): {
 } {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: ref as React.RefObject<HTMLElement>,
     offset: ['start end', 'end start'],
   });
 
-  const disabled = reduced || isMobile;
+  // Só "reduzir movimento" desliga. O parallax é transform puro, roda na GPU
+  // e não custa no celular — o corte por largura de tela era conservadorismo.
+  const disabled = reduced;
   const amount = speed * 100;
   const y = useTransform(
     scrollYProgress,

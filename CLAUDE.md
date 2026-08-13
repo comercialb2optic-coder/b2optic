@@ -82,8 +82,7 @@ O envio passa por `client/src/lib/submitLead.ts`, que lê `VITE_LEAD_WEBHOOK_URL
 
 - [ ] `VITE_LEAD_WEBHOOK_URL` não configurada — formulário ainda não entrega lead
 - [ ] `ONBOARDING_SECTION.steps` em `content.ts` é **conteúdo provisório**, deduzido do app e da metodologia. Precisa das etapas reais antes de publicar
-- [ ] Logos das ferramentas do `ToolsOrbit` — os nós renderizam o nome em tipografia. Basta colocar arquivo em `public/ferramentas/` e preencher o campo `logo` de cada item
-- [ ] Google e n8n em `TOOLS_SECTION.tools` estão com `confirmed: false` — confirmar se entram
+- [ ] Faltam as logos de **WhatsApp** e **B2Performance** no `ToolsOrbit` — só esses dois nós ainda renderizam o nome em tipografia. Os outros sete já têm arquivo em `public/ferramentas/` e o campo `logo` preenchido. Logo monocromática escura precisa ser recolorida para branco antes de entrar, senão some no nó (`#141A28`) — foi o caso da OpenAI
 - [ ] Links de redes sociais em `SOCIAL` (`content.ts`) apontam para `#`, e o WhatsApp está como `wa.me/55XXXXXXXXXXX`
 - [ ] `Cases` carrega 5 iframes do YouTube — pesa no mobile. Avaliar troca por thumbnail com play
 - [ ] `ManusDialog.tsx` é código morto (sobra do template, "Login with Manus"), não é importado em lugar nenhum
@@ -92,6 +91,8 @@ O envio passa por `client/src/lib/submitLead.ts`, que lê `VITE_LEAD_WEBHOOK_URL
 
 ## Imagens do painel
 
-`public/painel/painel-desktop.jpg` e `painel-mobile.jpg` são recortes de screenshots do app **B2Performance**, da rede fictícia "Multfoco" usada no modo preview.
+`public/painel/painel-desktop.jpg` é um mockup do app **B2Performance** com números fabricados, aprovado pelo dono em 13/08/2026. Ele nomeia "Bella Otica Araxa", que é uma ótica real do carrossel de logos — os dados são inventados, mas a atribuição é a um cliente real, então a decisão de manter é do dono, não sua.
 
-**São dados de demonstração e devem continuar sendo.** Nunca substitua por print de cliente real — expõe faturamento e investimento de terceiro numa página pública. A seção exibe o aviso "Dados de demonstração" por isso.
+**Os números na tela devem continuar sendo fabricados.** Nunca substitua por print de operação real — expõe faturamento e investimento de terceiro numa página pública. A seção exibe o aviso "Dados de demonstração" por isso.
+
+`painel-mobile.jpg` (rede fictícia "Multfoco") está órfão desde que o celular sobreposto saiu da composição. Se voltar a ser usado, ele precisa mostrar a mesma ótica do desktop — as duas telas juntas com nomes diferentes denunciam a montagem.

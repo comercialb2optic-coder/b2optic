@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { EASE_OUT_QUINT } from './ease';
-import { useIsMobile } from './useIsMobile';
 
 interface BlurFadeProps {
   children: ReactNode;
@@ -25,13 +24,12 @@ export default function BlurFade({
   margin = '-80px',
 }: BlurFadeProps) {
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
 
   if (reduced) {
     return <div className={className}>{children}</div>;
   }
 
-  const useBlur = !isMobile && blur > 0;
+  const useBlur = blur > 0;
 
   const initial = useBlur
     ? { opacity: 0, y, filter: `blur(${blur}px)` }

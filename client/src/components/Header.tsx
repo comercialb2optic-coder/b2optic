@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { EASE_OUT_QUINT } from '@/components/motion';
 import { NAV } from '@/content';
 
-// Monograma "B2" — recortado justo do arquivo original, que vinha com ~95% de
-// área vazia em volta da marca. Proporção 3,6:1 (o wordmark completo é ~5,9:1),
-// então ocupa bem menos largura no cabeçalho.
-// Para voltar ao wordmark completo: '/b2optic-logo.png'.
-const HEADER_LOGO_SRC = '/b2optic-monograma.png';
+// Wordmark azul e prata, aparado da margem transparente que vinha no arquivo.
+// Proporção 11,8:1 — a 22px de altura dá ~260px de largura, que ainda cabe em
+// tela de 320px com o padding do cabeçalho. Alternativas no public:
+// '/b2optic-monograma.png' (só o "B2", 3,6:1) e '/b2optic-logo.png'.
+const HEADER_LOGO_SRC = '/b2optic-logo-azul-prata.png';
 const HEADER_LOGO_ALT = 'B2Optic';
 
 export default function Header() {
@@ -43,8 +43,8 @@ export default function Header() {
           <img
             src={HEADER_LOGO_SRC}
             alt={HEADER_LOGO_ALT}
-            width={86}
-            height={24}
+            width={1240}
+            height={105}
             className="h-[22px] w-auto select-none sm:h-6"
             draggable={false}
           />

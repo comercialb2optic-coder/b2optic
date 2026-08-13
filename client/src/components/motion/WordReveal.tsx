@@ -7,7 +7,6 @@ import {
 } from 'framer-motion';
 import { useRef } from 'react';
 import { EASE_OUT_QUINT } from './ease';
-import { useIsMobile } from './useIsMobile';
 
 interface WordRevealProps {
   text: string;
@@ -29,7 +28,6 @@ export default function WordReveal({
   as = 'span',
 }: WordRevealProps) {
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
   const Tag = as;
 
   if (reduced) {
@@ -38,29 +36,21 @@ export default function WordReveal({
 
   const words = text.split(' ');
 
-  if (scrollLinked && !isMobile) {
+  if (scrollLinked) {
     return (
       <ScrollLinkedReveal words={words} className={className} as={as} />
     );
   }
 
-  const useBlur = !isMobile;
-
   return (
     <Tag className={className}>
       {words.map((word, i) => {
-        const initial = useBlur
-          ? { opacity: 0, y: 12, filter: 'blur(8px)' }
-          : { opacity: 0, y: 8 };
-        const animate = useBlur
-          ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-          : { opacity: 1, y: 0 };
         return (
           <motion.span
             key={i}
             className="inline-block"
-            initial={initial}
-            whileInView={animate}
+            initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{
               duration,

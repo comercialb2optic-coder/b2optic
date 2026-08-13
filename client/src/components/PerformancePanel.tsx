@@ -1,9 +1,45 @@
-import { motion } from 'framer-motion';
+import { motion, useSpring, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
 import { EASE_OUT_QUINT, useParallax } from '@/components/motion';
 import { PANEL_SECTION } from '@/content';
 
+const clamp = (v: number, limite: number) =>
+  Math.max(-limite, Math.min(limite, v));
+
 export default function PerformancePanel() {
   const { ref, y } = useParallax(0.2);
+  const reduced = useReducedMotion();
+
+  // Inclinação por arrasto. Mola em vez de valor cru para que soltar o
+  // ponteiro volte sozinho ao repouso, sem animação imperativa.
+  const mola = { stiffness: 180, damping: 20, mass: 0.6 };
+  const tiltY = useSpring(0, mola);
+  const tiltX = useSpring(0, mola);
+  const origem = useRef<{ x: number; y: number } | null>(null);
+
+  function aoPegar(e: React.PointerEvent<HTMLDivElement>) {
+    if (reduced) return;
+    origem.current = { x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function aoArrastar(e: React.PointerEvent<HTMLDivElement>) {
+    const inicio = origem.current;
+    if (!inicio) return;
+    // Horizontal manda: é o gesto que o mouse faz naturalmente.
+    tiltY.set(clamp((e.clientX - inicio.x) * 0.14, 20));
+    tiltX.set(clamp((inicio.y - e.clientY) * 0.07, 10));
+  }
+
+  function aoSoltar(e: React.PointerEvent<HTMLDivElement>) {
+    if (!origem.current) return;
+    origem.current = null;
+    tiltY.set(0);
+    tiltX.set(0);
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  }
 
   return (
     <section
@@ -46,32 +82,34 @@ export default function PerformancePanel() {
             transition={{ duration: 1, ease: EASE_OUT_QUINT }}
             className="relative"
           >
-            <img
-              src="/painel/painel-desktop.jpg"
-              alt="Painel B2Performance mostrando receita do período, retorno sobre investimento e custo por venda"
-              width={1440}
-              height={440}
-              loading="lazy"
-              decoding="async"
-              className="w-full rounded-xl border border-white/10 shadow-[0_60px_120px_-40px_rgba(0,0,0,0.9)]"
-            />
-
-            {/* Telefone sobreposto. translateZ empurra pra frente no espaço 3D,
-                então ele descola do painel em vez de parecer colado nele. */}
-            <motion.img
-              src="/painel/painel-mobile.jpg"
-              alt="Painel B2Performance no celular, com funil de conversão e faturamento diário"
-              width={520}
-              height={1187}
-              loading="lazy"
-              decoding="async"
-              className="absolute -bottom-16 right-2 hidden w-[136px] rounded-[18px] border border-white/15 shadow-[0_40px_80px_-24px_rgba(0,0,0,0.95)] sm:block sm:w-[168px] lg:-bottom-20 lg:w-[196px]"
-              style={{ transform: 'translateZ(90px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, delay: 0.25, ease: EASE_OUT_QUINT }}
-            />
+            {/* Camada só do arrasto. Separada da entrada porque as duas mexem
+                em rotateX/rotateY — no mesmo elemento uma anularia a outra.
+                touch-action pan-y deixa o dedo rolar a página no vertical e
+                reserva o horizontal pra inclinação. */}
+            <motion.div
+              onPointerDown={aoPegar}
+              onPointerMove={aoArrastar}
+              onPointerUp={aoSoltar}
+              onPointerCancel={aoSoltar}
+              style={{
+                rotateX: tiltX,
+                rotateY: tiltY,
+                transformStyle: 'preserve-3d',
+                touchAction: 'pan-y',
+              }}
+              className="relative cursor-grab active:cursor-grabbing"
+            >
+              <img
+                src="/painel/painel-desktop.jpg"
+                alt="Painel B2Performance mostrando receita do período, retorno sobre investimento e custo por venda"
+                width={1507}
+                height={797}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="w-full select-none rounded-xl border border-white/10 shadow-[0_60px_120px_-40px_rgba(0,0,0,0.9)]"
+              />
+            </motion.div>
           </motion.div>
 
           <p className="mt-6 text-right text-[12px] text-muted-foreground sm:mt-8">

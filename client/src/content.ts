@@ -248,21 +248,34 @@ export const QUALIFICATION = {
  * tipografia. Para trocar por imagem, coloque o arquivo em
  * `public/ferramentas/` e preencha o campo — o componente não muda.
  */
+/**
+ * `logo` é `string | null` de propósito, mesmo com todas as ferramentas atuais
+ * tendo arquivo. Sem essa anotação o `as const` infere só os literais, o ramo
+ * de fallback tipográfico do ToolsOrbit vira `never` e o build quebra — e esse
+ * fallback é o que segura uma ferramenta nova entrar antes da logo chegar.
+ */
+interface Tool {
+  id: string;
+  label: string;
+  note: string;
+  confirmed: boolean;
+  logo: string | null;
+}
+
 export const TOOLS_SECTION = {
   eyebrow: 'Tecnologia',
   title: 'Uma estrutura inteira conectada na sua ótica',
   subtitle:
     'Não é ferramenta solta que você tem que aprender a usar. É captação, atendimento, agendamento e acompanhamento no mesmo fluxo — e a gente opera tudo.',
   tools: [
-    { id: 'meta', label: 'Meta', note: 'Anúncios', confirmed: true, logo: null },
-    { id: 'instagram', label: 'Instagram', note: 'Alcance', confirmed: true, logo: null },
-    { id: 'google', label: 'Google', note: 'Busca', confirmed: false, logo: null },
-    { id: 'whatsapp', label: 'WhatsApp', note: 'Atendimento', confirmed: true, logo: null },
-    { id: 'ia', label: 'IA', note: 'Agendamento 24h', confirmed: true, logo: null },
-    { id: 'clickup', label: 'ClickUp', note: 'Operação', confirmed: true, logo: null },
-    { id: 'n8n', label: 'n8n', note: 'Automação', confirmed: false, logo: null },
-    { id: 'painel', label: 'B2Performance', note: 'Painel', confirmed: true, logo: null },
-  ],
+    { id: 'meta', label: 'Meta', note: 'Anúncios', confirmed: true, logo: '/ferramentas/meta.png' },
+    { id: 'instagram', label: 'Instagram', note: 'Alcance', confirmed: true, logo: '/ferramentas/instagram.png' },
+    { id: 'gemini', label: 'Gemini', note: 'Busca', confirmed: true, logo: '/ferramentas/gemini.png' },
+    { id: 'openai', label: 'OpenAI', note: 'Agendamento 24h', confirmed: true, logo: '/ferramentas/openai.png' },
+    { id: 'claude', label: 'Claude', note: 'Análise', confirmed: true, logo: '/ferramentas/claude.png' },
+    { id: 'clickup', label: 'ClickUp', note: 'Operação', confirmed: true, logo: '/ferramentas/clickup.png' },
+    { id: 'n8n', label: 'n8n', note: 'Automação', confirmed: true, logo: '/ferramentas/n8n.png' },
+  ] as Tool[],
 } as const;
 
 // ⚠️ CONTEÚDO PROVISÓRIO — a sequência abaixo foi deduzida do que o app e a
