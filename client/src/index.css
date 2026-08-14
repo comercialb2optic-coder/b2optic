@@ -389,6 +389,18 @@ h3 {
   box-shadow: 0 24px 60px -24px rgba(11, 18, 32, 0.18);
 }
 
+/* Carrossel: some com a barra de rolagem sem perder a rolagem em si. O gesto
+   continua nativo (dedo, trackpad, shift+roda) — os botões são um atalho, não
+   o único caminho. */
+.scroll-invisivel {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-invisivel::-webkit-scrollbar {
+  display: none;
+}
+
 /* ============================================================================
    Elementos pequenos
    ========================================================================== */

@@ -154,6 +154,7 @@ export const CASES_SECTION = {
     { id: 3, videoId: '5z9TI2ATX40', oticaName: 'Ótica Brasil' },
     { id: 4, videoId: 'LCrl3aXCDCg', oticaName: 'Ótica Visão' },
     { id: 5, videoId: 'Y-deXtNVCfM', oticaName: 'Ótica Esquadra' },
+    { id: 6, videoId: '1AOnXMj4d04', oticaName: 'Ótica Visual Timon' },
   ],
 } as const;
 
