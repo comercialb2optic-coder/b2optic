@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 import { WordReveal, BlurFade, EASE_OUT_QUINT } from '@/components/motion';
 import SectionBackdrop from '@/components/SectionBackdrop';
 import CertificationBadges from '@/components/CertificationBadges';
+import PartnerBadge from '@/components/PartnerBadge';
 import LeadForm from '@/components/LeadForm';
 import { HERO, FORM } from '@/content';
 
@@ -88,6 +89,13 @@ export default function Hero() {
             <LeadForm title={FORM.heroTitle} subtitle={FORM.heroSubtitle} />
           </motion.div>
         </div>
+
+        {/* Abaixo das duas colunas, não dentro da do formulário: assim ele
+            centraliza sob a dobra inteira no desktop e cai logo depois do
+            formulário no mobile, que é onde o espaço estava sobrando. */}
+        <BlurFade delay={0.95} y={12} className="mt-12 sm:mt-14">
+          <PartnerBadge />
+        </BlurFade>
       </div>
     </section>
   );

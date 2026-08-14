@@ -90,6 +90,19 @@ export const CERTIFICATIONS = {
   ],
 } as const;
 
+/**
+ * A logo original da ssÓtica traz o wordmark em BRANCO — foi feita para fundo
+ * escuro. `logo` é a versão para o tema claro, com o texto recolorido para o
+ * tom de heading e o azul do ícone preservado. `logoOnDark` é a original, para
+ * o dia em que a marca aparecer dentro de um bloco `.section-dark`.
+ */
+export const PARTNER = {
+  label: 'Parceria oficial com',
+  name: 'ssÓtica',
+  logo: '/parceiros/ssotica.png',
+  logoOnDark: '/parceiros/ssotica-branca.png',
+} as const;
+
 export const CLIENTS_SECTION = {
   eyebrow: 'Quem já acelerou',
   title: 'Óticas que já vendem mais com a B2Optic',

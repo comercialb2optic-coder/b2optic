@@ -92,18 +92,55 @@ export default function ToolsOrbit() {
   );
 }
 
+/**
+ * Um observador só, no container HTML, propagando por variantes.
+ *
+ * Antes cada nó e cada tubo tinha o próprio `whileInView`, o que cria um
+ * IntersectionObserver em elemento INTERNO de SVG (`<g>`, `<path>`). No Safari
+ * do iOS esse observer não dispara, então nada saía de `opacity: 0` e a seção
+ * mostrava só o hub branco. No Chrome desktop funcionava — por isso passou
+ * despercebido.
+ *
+ * Variantes viajam pela árvore do React, não pelo layout, então os filhos
+ * herdam o estado sem precisar observar nada. De quebra, some com 15
+ * observers.
+ */
+const ORBITA = {
+  oculto: { opacity: 0, scale: 0.94 },
+  visivel: { opacity: 1, scale: 1 },
+};
+
+const TUBO = {
+  oculto: { pathLength: 0, opacity: 0 },
+  visivel: { pathLength: 1, opacity: 1 },
+};
+
+const NO = {
+  oculto: { opacity: 0, scale: 0.7 },
+  visivel: { opacity: 1, scale: 1 },
+};
+
 function Orbit({ reduced }: { reduced: boolean }) {
   const tools = TOOLS_SECTION.tools;
   const nodes = nodePositions(tools.length);
+
+  // Com "reduzir movimento" ligado, nada de variantes: os filhos renderizam
+  // no estado natural, já visíveis.
+  const animacao = reduced
+    ? {}
+    : {
+        initial: 'oculto',
+        whileInView: 'visivel',
+        viewport: { once: true, margin: '-80px' },
+        variants: ORBITA,
+      };
 
   return (
     <motion.div
       className="relative mx-auto w-full"
       style={{ maxWidth: SIZE }}
-      initial={reduced ? false : { opacity: 0, scale: 0.94 }}
-      whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8, ease: EASE_OUT_QUINT }}
+      {...animacao}
     >
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
@@ -132,9 +169,7 @@ function Orbit({ reduced }: { reduced: boolean }) {
               stroke="rgba(255,255,255,0.07)"
               strokeWidth={20}
               strokeLinecap="round"
-              initial={reduced ? false : { pathLength: 0, opacity: 0 }}
-              whileInView={reduced ? undefined : { pathLength: 1, opacity: 1 }}
-              viewport={{ once: true, margin: '-80px' }}
+              variants={reduced ? undefined : TUBO}
               transition={{
                 duration: 0.9,
                 delay: 0.2 + i * 0.07,
@@ -150,9 +185,7 @@ function Orbit({ reduced }: { reduced: boolean }) {
           return (
             <motion.g
               key={tool.id}
-              initial={reduced ? false : { opacity: 0, scale: 0.7 }}
-              whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-80px' }}
+              variants={reduced ? undefined : NO}
               transition={{
                 duration: 0.5,
                 delay: 0.45 + i * 0.07,
