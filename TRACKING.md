@@ -1,0 +1,249 @@
+# Rastreamento da LP → Meta
+
+Como o lead do formulário vira sinal de otimização dentro do Meta Ads.
+
+---
+
+## O problema que isso resolve
+
+Anunciar mandando tráfego para a LP sem devolver nada para a Meta faz o
+algoritmo otimizar no escuro: ele entrega para quem clica, não para quem vira
+cliente. O que corrige isso é fechar o ciclo — contar para a Meta que o
+formulário foi enviado e, depois, o que aconteceu com aquele lead.
+
+---
+
+## O caminho do dado
+
+```
+  Visitante na LP
+        │
+        │  pixel carrega, grava _fbp e _fbc (o _fbc é o elo com o CLIQUE no anúncio)
+        ▼
+  Preenche o formulário
+        │
+        ├──► pixel do navegador: Lead  ─────────┐
+        │                                        │  mesmo event_id
+        └──► POST /api/lead (mesmo domínio)      │  → a Meta conta UM evento
+                   │                             │
+                   ├──► Conversions API: Lead ───┘
+                   │
+                   └──► webhook do n8n ──► DataCrazy (lead + additionalFields
+                                            com fbp, fbc, visitorId, eventId)
+                                                  │
+                                     etiqueta aplicada no CRM
+                                                  │
+                                                  ▼
+                                          n8n ──► POST /api/crm-event
+                                                  │
+                                                  ▼
+                                     Conversions API: LeadQualificado,
+                                     Schedule, Purchase, LeadDesqualificado
+```
+
+### Por que o formulário passa pela Vercel em vez de ir direto ao n8n
+
+1. **IP e user agent reais.** A Meta usa os dois para casar o lead com a conta
+   do Facebook da pessoa. No navegador eles não existem.
+2. **Bloqueador de anúncio.** O pixel é a primeira coisa que cai. A chamada
+   para `/api/lead` é para o próprio domínio da LP e passa.
+3. **Segredo fora do bundle.** A URL do webhook e o token da Meta ficam no
+   servidor. Antes, a URL do n8n estava dentro do JS público da página.
+
+### Por que os eventos do CRM também passam pela Vercel
+
+Porque `api/_lib/meta.ts` é a **única** implementação de "normalizar e hashear
+telefone". Se o n8n falasse direto com a Graph API existiriam duas — e no dia
+em que elas divergirem por um espaço em branco a Meta silenciosamente para de
+cruzar o `Lead` com o `Purchase`. Nenhum erro aparece; a atribuição só some.
+
+---
+
+## Variáveis de ambiente
+
+Ver `.env.example`. Resumo do que precisa existir na Vercel:
+
+| Variável | Onde vive | Para que serve |
+|---|---|---|
+| `VITE_META_PIXEL_ID` | navegador | carrega o pixel |
+| `META_PIXEL_ID` | servidor | destino dos eventos da CAPI |
+| `META_CAPI_ACCESS_TOKEN` | servidor | **segredo** — autentica na Graph API |
+| `LEAD_WEBHOOK_URL` | servidor | webhook do n8n que recebe o lead |
+| `CRM_EVENT_SECRET` | servidor | senha do header `x-b2o-secret` |
+| `META_GRAPH_VERSION` | servidor | opcional, vazio = `v25.0` |
+| `META_TEST_EVENT_CODE` | servidor | **só em teste**, ver abaixo |
+
+> **Cuidado com `Sensitive` na Vercel em variável `VITE_`.** Variável `VITE_` é
+> lida no *build*; variável marcada como Sensitive não volta legível. Se o build
+> não enxergar o valor, o Vite compila `undefined` e elimina o código que
+> dependia dela — sem erro nenhum no deploy. Foi exatamente isso que matou o
+> formulário em produção antes desta mudança. `VITE_META_PIXEL_ID` deve ser
+> **comum**, não Sensitive (e não é segredo: o ID do pixel aparece no código de
+> qualquer site que anuncia).
+
+---
+
+## Passo a passo para ligar
+
+### 1. Gerenciador de Eventos
+
+1. Fontes de dados → o dataset da B2Optic → copiar o **ID do dataset**.
+2. Configurações → Conversions API → **Gerar token de acesso**. Guardar bem:
+   com ele dá para enviar evento em nome do dataset.
+
+### 2. Vercel
+
+```bash
+vercel env add VITE_META_PIXEL_ID production   # comum, NAO sensitive
+vercel env add META_PIXEL_ID production
+vercel env add META_CAPI_ACCESS_TOKEN production --sensitive
+vercel env add LEAD_WEBHOOK_URL production --sensitive
+vercel env add CRM_EVENT_SECRET production --sensitive
+```
+
+Depois, redeploy — `VITE_META_PIXEL_ID` só entra no bundle em um build novo.
+
+### 3. n8n — fluxo de entrada
+
+Webhook (POST) recebe do `/api/lead`:
+
+```json
+{
+  "name": "...", "whatsapp": "5547999999999", "opticsName": "...",
+  "revenue": "100-250k", "adsExperience": "agencia",
+  "origem": "lp-b2optic", "enviadoEm": "2026-08-21T18:00:00.000Z",
+  "pagina": "https://...",
+  "meta": {
+    "eventId": "...", "visitorId": "...",
+    "fbp": "fb.1....", "fbc": "fb.1....", "fbclid": "...",
+    "eventTime": 1787000000
+  },
+  "utm_source": "...", "utm_campaign": "..."
+}
+```
+
+O nó seguinte cria o lead no DataCrazy:
+
+```
+POST https://api.g1.datacrazy.io/api/v1/leads
+Authorization: Bearer <token do DataCrazy>
+
+{
+  "name": "{{ $json.name }}",
+  "phone": "{{ $json.whatsapp }}",
+  "company": "{{ $json.opticsName }}",
+  "source": "LP B2Optic",
+  "additionalFields": [
+    { "name": "meta_visitor_id", "value": "{{ $json.meta.visitorId }}" },
+    { "name": "meta_fbp",        "value": "{{ $json.meta.fbp }}" },
+    { "name": "meta_fbc",        "value": "{{ $json.meta.fbc }}" },
+    { "name": "meta_event_id",   "value": "{{ $json.meta.eventId }}" },
+    { "name": "utm_campaign",    "value": "{{ $json.utm_campaign }}" }
+  ]
+}
+```
+
+**`additionalFields` é o coração do loop.** Sem `fbc` guardado, o evento de
+"virou cliente" três semanas depois chega na Meta sem saber de qual anúncio
+veio — vira número solto em vez de otimização.
+
+O webhook precisa responder **2xx**; a página mostra erro para o visitante se
+não responder, e é assim que deve ser (melhor a pessoa tentar de novo do que a
+gente perder o lead achando que deu certo).
+
+### 4. n8n — fluxo de volta (etiqueta → Meta)
+
+Gatilho: automação do DataCrazy que dispara ao aplicar a etiqueta. Se o payload
+não trouxer os `additionalFields`, buscar o lead por ID antes
+(`GET /api/v1/leads/{id}`).
+
+```
+POST https://<dominio-da-lp>/api/crm-event
+x-b2o-secret: <CRM_EVENT_SECRET>
+
+{
+  "stage": "qualificado",
+  "whatsapp": "5547999999999",
+  "name": "...",
+  "visitorId": "<meta_visitor_id do CRM>",
+  "fbp": "<meta_fbp do CRM>",
+  "fbc": "<meta_fbc do CRM>"
+}
+```
+
+Estágios aceitos (`api/crm-event.ts`), etiqueta do DataCrazy → evento na Meta:
+
+| `stage` | Evento na Meta | Tipo |
+|---|---|---|
+| `qualificado` | `LeadQualificado` | customizado |
+| `agendado` | `Schedule` | padrão |
+| `compareceu` | `ReuniaoRealizada` | customizado |
+| `cliente` | `Purchase` | padrão (aceita `value`) |
+| `desqualificado` | `LeadDesqualificado` | customizado |
+| `perdido` | `LeadPerdido` | customizado |
+
+Para `cliente`, mandar junto `"value": 4800, "currency": "BRL"` com o valor
+real do contrato — é o que liga otimização por valor e ROAS de verdade.
+
+Nomes de estágio novos: editar `EVENTO_POR_ESTAGIO` em `api/crm-event.ts`.
+
+### 5. Conversões Personalizadas
+
+Evento customizado não vira evento de otimização sozinho. No Gerenciador de
+Eventos → Conversões personalizadas → criar uma em cima de `LeadQualificado`.
+Aí ela aparece como opção de otimização no conjunto de anúncios.
+
+---
+
+## Testando antes de gastar mídia
+
+1. Gerenciador de Eventos → o dataset → **Testar eventos** → copiar o código.
+2. `vercel env add META_TEST_EVENT_CODE preview` e usar um deploy de preview.
+3. Preencher o formulário. Devem aparecer:
+   - `Lead` do **navegador** e `Lead` do **servidor**, marcados como
+     **desduplicados** (é o certo — significa que o `event_id` bateu);
+   - `IniciouFormulario` ao passar do passo 1.
+4. Disparar um `/api/crm-event` de teste e ver o estágio aparecer.
+5. **Apagar `META_TEST_EVENT_CODE`.** Com ele setado nada conta como conversão
+   real.
+
+Depois de no ar, acompanhar em Gerenciador de Eventos → **Qualidade da
+correspondência de eventos (EMQ)**. Abaixo de 6 vale investigar; o que mais
+puxa a nota para cima é telefone e `fbc` presentes.
+
+---
+
+## O que este desenho NÃO faz
+
+**Otimizar a partir do lead ruim.** A Meta não aprende com evento negativo em
+campanha de site. O objetivo que aprende com estágio de lead é o *Conversion
+Leads*, e ele só existe para Lead Ads (formulário instantâneo), não para
+formulário em site — está na
+[doc da CAPI para CRM](https://developers.facebook.com/docs/marketing-api/conversions-api/conversion-leads-integration/payload-specification/).
+
+O `LeadDesqualificado` serve para outras duas coisas, que valem: medir
+qualidade por campanha e alimentar um público personalizado de lead ruim para
+**excluir** da segmentação. A otimização em si vem de mandar o evento positivo
+profundo e otimizar por ele.
+
+**Ciclo de venda longo.** `event_time` só aceita até 7 dias no passado, e a
+janela de atribuição padrão é 7 dias de clique. Um `Purchase` que acontece 30
+dias depois do clique entra como evento, mas não é atribuído àquele anúncio.
+Por isso o evento de otimização deve ser o mais fundo que ainda acontece
+**dentro da janela** — na prática, `LeadQualificado` ou `Schedule`.
+
+**Volume.** Um conjunto de anúncios precisa de ~50 conversões por semana para
+sair do aprendizado. Otimizar por um evento que acontece 3 vezes por mês trava
+a entrega e encarece. Por isso o plano é começar em `Lead` e subir para
+`LeadQualificado` quando o volume permitir.
+
+---
+
+## LGPD
+
+O formulário manda para a Meta telefone e nome **hasheados em SHA-256** (mais
+IP e user agent, que a Meta exige em claro). Isso precisa estar escrito na
+política de privacidade: que dados de contato são compartilhados de forma
+pseudonimizada com a Meta para medição e otimização de anúncios. Hoje a LP diz
+só "Seus dados ficam com a gente. Sem spam, sem repasse." — **essa frase
+conflita com o que o sistema passa a fazer** e precisa ser ajustada.

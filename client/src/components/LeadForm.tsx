@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { Check, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { EASE_OUT_QUINT } from '@/components/motion';
 import { submitLead } from '@/lib/submitLead';
+import { trackFormStart } from '@/lib/metaPixel';
 import { FORM, CTA, REVENUE_OPTIONS, ADS_OPTIONS } from '@/content';
 
 /**
@@ -72,6 +73,7 @@ export default function LeadForm({
   const [direction, setDirection] = useState<1 | -1>(1);
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [comecou, setComecou] = useState(false);
 
   const {
     register,

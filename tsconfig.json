@@ -1,8 +1,12 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*", "api/**/*"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "incremental": true,
+    // Vite transpila o código de verdade; aqui é só checagem. Sem target, o tsc
+    // assume ES5 e recusa coisas que o bundle suporta sem problema (ex.: flag
+    // /u em regex, usada na normalização de nome para a Meta).
+    "target": "ESNext",
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": true,
     "module": "ESNext",
