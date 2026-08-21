@@ -93,7 +93,13 @@ export default function Hero() {
         {/* Abaixo das duas colunas, não dentro da do formulário: assim ele
             centraliza sob a dobra inteira no desktop e cai logo depois do
             formulário no mobile, que é onde o espaço estava sobrando. */}
-        <BlurFade delay={0.95} y={12} className="mt-12 sm:mt-14">
+        <BlurFade
+          delay={0.4}
+          duration={0.45}
+          y={8}
+          blur={6}
+          className="mt-12 sm:mt-14"
+        >
           <PartnerBadge />
         </BlurFade>
       </div>

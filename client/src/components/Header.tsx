@@ -14,7 +14,13 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    // Limiar curto de propósito: o fundo precisa chegar junto com o gesto. Com
+    // os 24px anteriores a barra ficava transparente durante o primeiro trecho
+    // da rolagem e a logo aparecia atrasada, sobre o conteúdo em movimento.
+    const handleScroll = () => setIsScrolled(window.scrollY > 6);
+    // Lê já na montagem — quem recarrega a página no meio dela chegava aqui com
+    // o cabeçalho transparente até o primeiro evento de scroll.
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -25,16 +31,19 @@ export default function Header() {
 
   return (
     <motion.header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-200 ${
         isScrolled
-          ? 'border-b border-line bg-background/85 backdrop-blur-xl'
+          ? 'border-b border-line bg-background/90 backdrop-blur-xl'
           : 'border-b border-transparent bg-transparent'
       }`}
-      initial={{ opacity: 0, y: -16 }}
+      initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}
+      transition={{ duration: 0.4, ease: EASE_OUT_QUINT }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
+      {/* max-w-6xl, não 7xl: é a largura de container do resto da página. Com
+          7xl a logo caía 64px à esquerda do texto do hero e a navegação passava
+          da borda direita do formulário. */}
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
         <a
           href="/"
           aria-label="B2Optic — voltar ao topo"

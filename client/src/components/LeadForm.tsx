@@ -197,7 +197,7 @@ export default function LeadForm({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Enviando...
+                    {FORM.sending}
                   </>
                 ) : step === 3 ? (
                   CTA.form
@@ -223,7 +223,7 @@ function ProgressIndicator({ step }: { step: 1 | 2 | 3 }) {
     <div className="mb-7">
       <div className="mb-2.5 flex items-center justify-between text-[12px] font-medium text-muted-foreground">
         <span>{FORM.steps[step].label}</span>
-        <span>Passo {step} de 3</span>
+        <span>{FORM.stepCounter(step)}</span>
       </div>
       <div className="relative h-1 w-full overflow-hidden rounded-full bg-line">
         <motion.div

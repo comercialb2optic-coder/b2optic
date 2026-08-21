@@ -72,7 +72,7 @@ export const HERO = {
   /** Já manda agendar e diz o que muda na operação dela — mesma mecânica da
    *  V4, que não gasta o subtítulo descrevendo a empresa. */
   subtitle:
-    'Agende seu diagnóstico gratuito e veja onde sua operação está perdendo venda hoje — e o que mudar pra vender mais no balcão.',
+    'Agende seu diagnóstico gratuito e veja onde sua operação está perdendo venda hoje — e o que mudar para vender mais no balcão.',
   benefits: [
     'Marketing e comercial focados em ROI, não em curtida',
     'Lead qualificado que entra na loja, não volume vazio',
@@ -103,10 +103,8 @@ export const PARTNER = {
   logoOnDark: '/parceiros/ssotica-branca.png',
 } as const;
 
-export const CLIENTS_SECTION = {
-  eyebrow: 'Quem já acelerou',
-  title: 'Óticas que já vendem mais com a B2Optic',
-} as const;
+// A faixa de logos de clientes não tem título: as marcas falam sozinhas e o
+// título repetia o que a seção de Cases já diz logo abaixo.
 
 export const FORM = {
   /** Usados quando o formulário aparece dentro do hero. */
@@ -116,16 +114,22 @@ export const FORM = {
   eyebrow: 'Vamos acelerar?',
   title: 'Dar o próximo passo leva 1 minuto',
   subtitle:
-    'Responde três perguntas rápidas e um especialista liga em 10 minutos pra montar seu diagnóstico.',
+    'Responda três perguntas rápidas e um especialista liga em 10 minutos para montar seu diagnóstico.',
   steps: {
     1: { label: 'Seus dados', title: 'Como a gente fala com você?' },
     2: { label: 'Sua ótica', title: 'Qual o faturamento mensal hoje?' },
     3: { label: 'Seu momento', title: 'Você já anuncia?' },
   },
+  /** Contador de etapa — o total mora aqui, não no JSX do formulário. */
+  stepCounter: (step: number) => `Passo ${step} de 3`,
+  sending: 'Enviando…',
   fields: {
     name: { label: 'Nome', placeholder: 'Seu nome completo' },
     whatsapp: { label: 'WhatsApp', placeholder: '(47) 99999-9999' },
-    opticsName: { label: 'Nome da ótica', placeholder: 'Como aparece na fachada' },
+    opticsName: {
+      label: 'Nome da ótica',
+      placeholder: 'Como aparece na fachada',
+    },
   },
   errors: {
     name: 'Informe seu nome',
@@ -133,11 +137,11 @@ export const FORM = {
     opticsName: 'Informe o nome da sua ótica',
     revenue: 'Escolha uma faixa de faturamento',
     ads: 'Escolha uma opção',
-    network: 'Não conseguimos enviar agora. Tenta de novo em instantes.',
+    network: 'Não conseguimos enviar agora. Tente de novo em instantes.',
   },
   success: {
     title: 'Pronto. Recebemos sua solicitação.',
-    body: 'Um especialista liga no seu WhatsApp em cerca de 10 minutos pra montar o diagnóstico da sua ótica.',
+    body: 'Um especialista liga no seu WhatsApp em cerca de 10 minutos para montar o diagnóstico da sua ótica.',
   },
   privacy: 'Seus dados ficam com a gente. Sem spam, sem repasse.',
 } as const;
@@ -150,10 +154,22 @@ export const REVENUE_OPTIONS = [
 ] as const;
 
 export const ADS_OPTIONS = [
-  { value: 'agencia', label: 'Já anuncio com agência', sub: 'Tenho parceiro hoje' },
-  { value: 'conta-propria', label: 'Já tentei por conta própria', sub: 'Sem agência atual' },
+  {
+    value: 'agencia',
+    label: 'Já anuncio com agência',
+    sub: 'Tenho parceiro hoje',
+  },
+  {
+    value: 'conta-propria',
+    label: 'Já tentei por conta própria',
+    sub: 'Sem agência atual',
+  },
   { value: 'nunca', label: 'Nunca anunciei', sub: 'Vou começar agora' },
-  { value: 'insatisfeito', label: 'Anuncio mas tô insatisfeito', sub: 'Quero trocar' },
+  {
+    value: 'insatisfeito',
+    label: 'Anuncio, mas estou insatisfeito',
+    sub: 'Quero trocar',
+  },
 ] as const;
 
 export const CASES_SECTION = {
@@ -161,6 +177,10 @@ export const CASES_SECTION = {
   title: 'Quem já vive o resultado',
   subtitle:
     'Donos de ótica contando, no formato deles, o que mudou depois do método B2Optic.',
+  /** Rótulo do botão de play — completado com o nome da ótica do card. */
+  playLabel: 'Assistir ao depoimento da',
+  /** Kicker que aparece acima do nome da ótica, no pé de cada card. */
+  cardKicker: 'Depoimento em vídeo',
   items: [
     { id: 1, videoId: 'RxmJEAwXWAQ', oticaName: 'Ótica Ipanema' },
     { id: 2, videoId: 'VfOnDZZUMwg', oticaName: 'Ótica Vitaliz' },
@@ -168,6 +188,8 @@ export const CASES_SECTION = {
     { id: 4, videoId: 'LCrl3aXCDCg', oticaName: 'Ótica Visão' },
     { id: 5, videoId: 'Y-deXtNVCfM', oticaName: 'Ótica Esquadra' },
     { id: 6, videoId: '1AOnXMj4d04', oticaName: 'Ótica Visual Timon' },
+    { id: 7, videoId: 'q7kYlRXDiQs', oticaName: 'Ótica Anderson Glasses' },
+    { id: 8, videoId: 'IhW7ZVQUw5Y', oticaName: 'Ótica Diniz' },
   ],
 } as const;
 
@@ -175,12 +197,12 @@ export const DIAGNOSTIC_PREVIEW = {
   eyebrow: 'Diagnóstico gratuito',
   title: 'O que você recebe no diagnóstico',
   subtitle:
-    'Em 45 minutos um especialista analisa o marketing e o processo comercial da sua ótica e te entrega um plano de ação pra aplicar na semana.',
+    'Em 45 minutos um especialista analisa o marketing e o processo comercial da sua ótica e te entrega um plano de ação para aplicar na semana.',
   items: [
     {
       index: '01',
       title: 'Onde sua ótica está hoje',
-      body: 'Análise da situação atual pra identificar juntos os gargalos que estão travando o crescimento.',
+      body: 'Análise da situação atual para identificar juntos os gargalos que estão travando o crescimento.',
     },
     {
       index: '02',
@@ -190,7 +212,7 @@ export const DIAGNOSTIC_PREVIEW = {
     {
       index: '03',
       title: 'Plano de ação estratégico',
-      body: 'Um plano concreto pra aumentar demanda qualificada e número de vendas, com prioridade e ordem de execução.',
+      body: 'Um plano concreto para aumentar demanda qualificada e número de vendas, com prioridade e ordem de execução.',
     },
   ],
 } as const;
@@ -200,7 +222,7 @@ export const ABOUT = {
   title: 'Um time preparado para acelerar a sua ótica',
   highlight: 'acelerar',
   paragraphs: [
-    'Unimos estratégia, tecnologia e execução pra transformar o marketing da sua ótica em venda real no balcão. Somos especialistas em captação qualificada, automação de agendamento e estruturação do processo comercial — tudo conectado.',
+    'Unimos estratégia, tecnologia e execução para transformar o marketing da sua ótica em venda real no balcão. Somos especialistas em captação qualificada, automação de agendamento e estruturação do processo comercial — tudo conectado.',
     'Nosso time trabalha lado a lado com cada ótica parceira. Mais de 200 óticas aceleradas e +R$ 13 milhões em vendas geradas comprovam: a gente vive aquilo que entrega.',
   ],
 } as const;
@@ -214,7 +236,7 @@ export const METHODOLOGY = {
     {
       number: '01',
       label: 'Captação',
-      body: 'Anúncios com criativos validados que atraem lead com intenção real de compra — não volume vazio, mas gente pronta pra entrar na sua loja.',
+      body: 'Anúncios com criativos validados que atraem lead com intenção real de compra — não volume vazio, mas gente pronta para entrar na sua loja.',
     },
     {
       number: '02',
@@ -229,7 +251,7 @@ export const METHODOLOGY = {
     {
       number: '04',
       label: 'Gestão',
-      body: 'Vendas e métricas em tempo real, com gestão de leads e oportunidades — pra você ver o que converte e escalar o que funciona.',
+      body: 'Vendas e métricas em tempo real, com gestão de leads e oportunidades — para você ver o que converte e escalar o que funciona.',
     },
   ],
 } as const;
@@ -241,9 +263,9 @@ export const QUALIFICATION = {
   options: [
     'Aumentar o retorno dos anúncios e parar de queimar verba',
     'Atrair mais clientes qualificados e lotar a agenda da ótica',
-    'Estruturar o comercial pra vender mais óculos no balcão',
+    'Estruturar o comercial para vender mais óculos no balcão',
     'Automatizar o agendamento e o atendimento',
-    'Ter criativos validados que trazem movimento pra loja',
+    'Ter criativos validados que trazem movimento para a loja',
   ],
   /** Quantas opções marcadas fecham o argumento. */
   threshold: 3,
@@ -282,13 +304,55 @@ export const TOOLS_SECTION = {
   subtitle:
     'Não é ferramenta solta que você tem que aprender a usar. É captação, atendimento, agendamento e acompanhamento no mesmo fluxo — e a gente opera tudo.',
   tools: [
-    { id: 'meta', label: 'Meta', note: 'Anúncios', confirmed: true, logo: '/ferramentas/meta.png' },
-    { id: 'instagram', label: 'Instagram', note: 'Alcance', confirmed: true, logo: '/ferramentas/instagram.png' },
-    { id: 'gemini', label: 'Gemini', note: 'Busca', confirmed: true, logo: '/ferramentas/gemini.png' },
-    { id: 'openai', label: 'OpenAI', note: 'Agendamento 24h', confirmed: true, logo: '/ferramentas/openai.png' },
-    { id: 'claude', label: 'Claude', note: 'Análise', confirmed: true, logo: '/ferramentas/claude.png' },
-    { id: 'clickup', label: 'ClickUp', note: 'Operação', confirmed: true, logo: '/ferramentas/clickup.png' },
-    { id: 'n8n', label: 'n8n', note: 'Automação', confirmed: true, logo: '/ferramentas/n8n.png' },
+    {
+      id: 'meta',
+      label: 'Meta',
+      note: 'Anúncios',
+      confirmed: true,
+      logo: '/ferramentas/meta.png',
+    },
+    {
+      id: 'instagram',
+      label: 'Instagram',
+      note: 'Alcance',
+      confirmed: true,
+      logo: '/ferramentas/instagram.png',
+    },
+    {
+      id: 'gemini',
+      label: 'Gemini',
+      note: 'Busca',
+      confirmed: true,
+      logo: '/ferramentas/gemini.png',
+    },
+    {
+      id: 'openai',
+      label: 'OpenAI',
+      note: 'Agendamento 24h',
+      confirmed: true,
+      logo: '/ferramentas/openai.png',
+    },
+    {
+      id: 'claude',
+      label: 'Claude',
+      note: 'Análise',
+      confirmed: true,
+      logo: '/ferramentas/claude.png',
+    },
+    {
+      id: 'clickup',
+      label: 'ClickUp',
+      note: 'Operação',
+      confirmed: true,
+      logo: '/ferramentas/clickup.png',
+    },
+    {
+      id: 'n8n',
+      label: 'n8n',
+      note: 'Automação',
+      confirmed: true,
+      logo: '/ferramentas/n8n.png',
+    },
   ] as Tool[],
 } as const;
 
@@ -322,7 +386,7 @@ export const ONBOARDING_SECTION = {
     {
       week: 'Semana 3',
       title: 'Agenda e comercial',
-      body: 'Agendamento automático conectado à sua agenda, com lembrete no WhatsApp pra reduzir falta. Treinamento do balcão pra fechar a venda.',
+      body: 'Agendamento automático conectado à sua agenda, com lembrete no WhatsApp para reduzir falta. Treinamento do balcão para fechar a venda.',
       deliverable: 'Agenda preenchida',
     },
     {
@@ -338,11 +402,11 @@ export const PANEL_SECTION = {
   eyebrow: 'Acompanhamento',
   title: 'Você vê o dinheiro entrando, não um relatório no fim do mês',
   subtitle:
-    'Painel próprio, aberto pra você a qualquer hora. Quanto entrou, quanto custou, quantos agendaram e quantos compraram.',
+    'Painel próprio, aberto para você a qualquer hora. Quanto entrou, quanto custou, quantos agendaram e quantos compraram.',
   highlights: [
     {
       title: 'Funil inteiro, não só lead',
-      body: 'Lead → agendamento → comparecimento → venda. Dá pra ver exatamente em qual etapa você está perdendo dinheiro.',
+      body: 'Lead → agendamento → comparecimento → venda. Dá para ver exatamente em qual etapa você está perdendo dinheiro.',
     },
     {
       title: 'Retorno por real investido',
@@ -356,6 +420,12 @@ export const PANEL_SECTION = {
   /** Rede fictícia usada no modo preview do app — dado de demonstração, nunca
    *  dado de cliente real. */
   disclaimer: 'Dados de demonstração',
+} as const;
+
+/** Faixa de CTA no meio da página — os textos moravam soltos no Home.tsx. */
+export const CTA_BANNER = {
+  title: 'A sua ótica pode ser a próxima',
+  subtitle: 'Preencha em 1 minuto e um especialista liga em 10 minutos.',
 } as const;
 
 // ⚠️ LINKS PENDENTES — vieram como [PREENCHER] da versão anterior e nunca

@@ -1,5 +1,4 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { CLIENTS_SECTION } from '@/content';
 
 const OPTICAS_LOGOS = [
   { id: 1, name: 'Ótica Ipanema', url: '/oticas/otica-ipanema.png' },
@@ -34,11 +33,9 @@ export default function ClientsCarousel() {
   const reduced = useReducedMotion();
 
   return (
-    <section className="overflow-hidden border-y border-line bg-surface py-14 sm:py-16">
-      <h2 className="mb-10 text-center text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-        {CLIENTS_SECTION.title}
-      </h2>
-
+    // Sem título: é uma faixa de prova, não uma seção. As marcas falam
+    // sozinhas e o padding menor deixa claro que ela separa o hero dos Cases.
+    <section className="overflow-hidden border-y border-line bg-surface py-11 sm:py-12">
       <div className="relative overflow-hidden">
         {/* Máscaras laterais — precisam casar com o fundo da seção (surface). */}
         <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-surface to-transparent sm:w-32" />

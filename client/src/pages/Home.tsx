@@ -13,6 +13,7 @@ import Qualification from '@/components/Qualification';
 import About from '@/components/About';
 import DiagnosticForm from '@/components/DiagnosticForm';
 import Footer from '@/components/Footer';
+import { CTA, CTA_BANNER } from '@/content';
 
 /**
  * Ordem das seções e alternância de fundo.
@@ -40,9 +41,9 @@ export default function Home() {
         <Onboarding />
         <CtaBanner
           variant="card"
-          titulo="A sua ótica pode ser a próxima"
-          subtitulo="Preenche em 1 minuto e um especialista liga em 10 minutos."
-          textoBotao="Quero meu diagnóstico gratuito"
+          titulo={CTA_BANNER.title}
+          subtitulo={CTA_BANNER.subtitle}
+          textoBotao={CTA.primary}
         />
         <Numbers />
         <Qualification />
