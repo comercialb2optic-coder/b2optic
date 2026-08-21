@@ -23,7 +23,7 @@ import {
   clampEventTime,
   jsonResponse,
   sendCapiEvents,
-} from './_lib/meta';
+} from './_lib/meta.js';
 
 /**
  * Estágio do CRM -> nome do evento na Meta.

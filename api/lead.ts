@@ -24,7 +24,7 @@ import {
   clientIpFrom,
   jsonResponse,
   sendCapiEvents,
-} from './_lib/meta';
+} from './_lib/meta.js';
 
 /**
  * Peso relativo de cada faixa de faturamento, em BRL.
