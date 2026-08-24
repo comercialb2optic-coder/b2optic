@@ -1,15 +1,15 @@
 /**
- * Recebe o formulário da LP, avisa a Meta e entrega o lead no n8n.
+ * Recebe o formulário da LP, cria o lead no CRM e avisa a Meta.
  *
- * O navegador manda para cá em vez de mandar direto para o n8n por três
- * motivos concretos:
+ * O navegador manda para cá em vez de falar direto com o CRM por três motivos
+ * concretos:
  *
  * 1. IP e user agent reais. A Meta usa os dois para casar o lead com a conta
  *    do Facebook da pessoa; do lado do cliente eles não existem.
  * 2. O evento chega mesmo com bloqueador de anúncio. O pixel do navegador é a
  *    primeira coisa que cai; esta chamada é para o próprio domínio da LP.
- * 3. A URL do webhook do n8n e o token da Meta param de viajar no bundle. Hoje
- *    a URL do n8n está literalmente dentro do JS público da página.
+ * 3. O token do CRM e o da Meta ficam no servidor. Chave de API dentro do JS
+ *    público da página é chave vazada.
  *
  * O `Lead` sai em dois caminhos — pixel no navegador e Conversions API aqui —
  * carregando o MESMO `event_id`. É assim que a Meta deduplica: mesmo
@@ -17,12 +17,14 @@
  * gente ganha a redundância sem inflar a conversão.
  */
 
+import { criarLeadNoCrm } from './_lib/datacrazy.js';
 import {
   buildFbc,
   buildUserData,
   clampEventTime,
   clientIpFrom,
   jsonResponse,
+  normalizePhone,
   sendCapiEvents,
 } from './_lib/meta.js';
 
@@ -39,6 +41,29 @@ const VALOR_POR_FATURAMENTO: Record<string, number> = {
   '30-100k': 60,
   '100-250k': 120,
   'acima-250k': 200,
+};
+
+/**
+ * Os mesmos rótulos que a pessoa leu na tela, para a anotação do CRM.
+ *
+ * Espelham `REVENUE_OPTIONS` e `ADS_OPTIONS` de `client/src/content.ts`. São
+ * duplicados de propósito: a função roda no servidor e importar o conteúdo do
+ * bundle do navegador só para ler quatro strings arrastaria o alias do Vite
+ * para dentro do runtime da Vercel. Se mudar um rótulo lá, mude aqui — o que
+ * quebra é a leitura de quem atende, não o envio.
+ */
+const ROTULO_FATURAMENTO: Record<string, string> = {
+  'ate-30k': 'Até R$ 30 mil',
+  '30-100k': 'R$ 30 a 100 mil',
+  '100-250k': 'R$ 100 a 250 mil',
+  'acima-250k': 'Acima de R$ 250 mil',
+};
+
+const ROTULO_ADS: Record<string, string> = {
+  agencia: 'Já anuncio com agência',
+  'conta-propria': 'Já tentei por conta própria',
+  nunca: 'Nunca anunciei',
+  insatisfeito: 'Anuncio, mas estou insatisfeito',
 };
 
 interface LeadPayload {
@@ -124,45 +149,29 @@ export default {
     }));
 
     /**
-     * O n8n é a fonte de verdade do lead. Se a Meta falhar a gente perde
-     * otimização; se o n8n falhar a gente perde o cliente — por isso só a
-     * resposta do n8n decide o status devolvido para a página.
+     * O CRM é a fonte de verdade do lead. Se a Meta falhar a gente perde
+     * otimização; se o CRM falhar a gente perde o cliente — por isso só a
+     * resposta do CRM decide o status devolvido para a página.
      */
-    const webhookUrl = process.env.LEAD_WEBHOOK_URL;
-    const crmPromise = (async () => {
-      if (!webhookUrl) {
-        return { ok: false, status: 0, detail: 'LEAD_WEBHOOK_URL ausente' };
-      }
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          whatsapp,
-          opticsName,
-          revenue: body.revenue,
-          adsExperience: body.adsExperience,
-          origem: 'lp-b2optic',
-          enviadoEm: new Date().toISOString(),
-          pagina: body.pageUrl,
-          // Guardar isto no CRM é o que torna possível, semanas depois,
-          // devolver "virou cliente" para a Meta ainda atribuído ao anúncio.
-          meta: {
-            eventId,
-            visitorId: body.visitorId,
-            fbp: body.fbp,
-            fbc: buildFbc(body.fbc, body.fbclid),
-            fbclid: body.fbclid,
-            eventTime,
-          },
-          ...(body.attribution || {}),
-        }),
-      });
-      return { ok: response.ok, status: response.status, detail: '' };
-    })().catch((error: unknown) => ({
-      ok: false,
+    const crmPromise = criarLeadNoCrm({
+      name,
+      phone: normalizePhone(whatsapp) || whatsapp.replace(/\D/g, ''),
+      company: opticsName,
+      faturamento: ROTULO_FATURAMENTO[body.revenue || ''] || body.revenue,
+      experienciaAds: ROTULO_ADS[body.adsExperience || ''] || body.adsExperience,
+      pageUrl: body.pageUrl,
+      attribution: body.attribution,
+      meta: {
+        eventId,
+        visitorId: body.visitorId,
+        fbp: body.fbp,
+        fbc: buildFbc(body.fbc, body.fbclid),
+      },
+    }).catch((error: unknown) => ({
+      ok: false as const,
       status: 0,
       detail: String(error),
+      avisos: [] as string[],
     }));
 
     const [capi, crm] = await Promise.all([capiPromise, crmPromise]);
@@ -171,8 +180,21 @@ export default {
       console.error('[api/lead] CAPI falhou', capi.status, capi.body);
     }
 
+    if (crm.avisos?.length) {
+      console.warn('[api/lead] CRM com avisos', crm.avisos.join(' | '));
+    }
+
     if (!crm.ok) {
-      console.error('[api/lead] webhook do n8n falhou', crm.status, crm.detail);
+      /**
+       * O lead não entrou no CRM. O log abaixo é a última cópia que existe
+       * dele — sem isso, a pessoa preencheu e o dado sumiu para sempre.
+       */
+      console.error(
+        '[api/lead] CRM falhou',
+        crm.status,
+        crm.detail,
+        JSON.stringify({ name, whatsapp, opticsName, revenue: body.revenue }),
+      );
       return jsonResponse(502, { ok: false, error: 'crm_indisponivel' });
     }
 

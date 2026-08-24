@@ -28,27 +28,37 @@ formulário foi enviado e, depois, o que aconteceu com aquele lead.
                    │                             │
                    ├──► Conversions API: Lead ───┘
                    │
-                   └──► webhook do n8n ──► DataCrazy (lead + additionalFields
-                                            com fbp, fbc, visitorId, eventId)
-                                                  │
-                                     etiqueta aplicada no CRM
-                                                  │
-                                                  ▼
-                                          n8n ──► POST /api/crm-event
-                                                  │
-                                                  ▼
-                                     Conversions API: LeadQualificado,
-                                     Schedule, Purchase, LeadDesqualificado
+                   └──► DataCrazy (API direta)
+                          ├── POST /leads              lead
+                          ├── POST /leads/{id}/notes   anotação com fbp, fbc,
+                          │                            visitorId e eventId
+                          └── POST /businesses         negócio na etapa
+                                     │                 "Entrada de Lead"
+                        etiqueta/etapa muda no CRM
+                                     │
+                                     ▼
+                       automação do CRM ──► POST /api/crm-event
+                                     │
+                                     ▼
+                        Conversions API: LeadQualificado,
+                        Schedule, Purchase, LeadDesqualificado
 ```
 
-### Por que o formulário passa pela Vercel em vez de ir direto ao n8n
+### Por que o formulário passa pela Vercel em vez de ir direto ao CRM
 
 1. **IP e user agent reais.** A Meta usa os dois para casar o lead com a conta
    do Facebook da pessoa. No navegador eles não existem.
 2. **Bloqueador de anúncio.** O pixel é a primeira coisa que cai. A chamada
    para `/api/lead` é para o próprio domínio da LP e passa.
-3. **Segredo fora do bundle.** A URL do webhook e o token da Meta ficam no
-   servidor. Antes, a URL do n8n estava dentro do JS público da página.
+3. **Segredo fora do bundle.** A chave da API do CRM e o token da Meta ficam no
+   servidor. Chave de API dentro do JS público da página é chave vazada.
+
+### Por que não tem n8n no meio
+
+Tinha, no desenho anterior. Saiu em 23/08/2026: cada peça no caminho é uma
+peça que pode cair, e o lead é a única coisa da página que não pode se perder.
+Hoje é um salto só — Vercel → DataCrazy — e quem decide se a página mostra
+sucesso ou erro é a resposta do próprio CRM.
 
 ### Por que os eventos do CRM também passam pela Vercel
 
@@ -68,7 +78,8 @@ Ver `.env.example`. Resumo do que precisa existir na Vercel:
 | `VITE_META_PIXEL_ID` | navegador | carrega o pixel |
 | `META_PIXEL_ID` | servidor | destino dos eventos da CAPI |
 | `META_CAPI_ACCESS_TOKEN` | servidor | **segredo** — autentica na Graph API |
-| `LEAD_WEBHOOK_URL` | servidor | webhook do n8n que recebe o lead |
+| `DATACRAZY_TOKEN` | servidor | **segredo** — chave da API do CRM |
+| `DATACRAZY_STAGE_ID` | servidor | etapa do funil onde o negócio nasce |
 | `CRM_EVENT_SECRET` | servidor | senha do header `x-b2o-secret` |
 | `META_GRAPH_VERSION` | servidor | opcional, vazio = `v25.0` |
 | `META_TEST_EVENT_CODE` | servidor | **só em teste**, ver abaixo |
@@ -97,65 +108,66 @@ Ver `.env.example`. Resumo do que precisa existir na Vercel:
 vercel env add VITE_META_PIXEL_ID production   # comum, NAO sensitive
 vercel env add META_PIXEL_ID production
 vercel env add META_CAPI_ACCESS_TOKEN production --sensitive
-vercel env add LEAD_WEBHOOK_URL production --sensitive
+vercel env add DATACRAZY_TOKEN production --sensitive
+vercel env add DATACRAZY_STAGE_ID production
 vercel env add CRM_EVENT_SECRET production --sensitive
 ```
 
+> **Cuidado com BOM.** Token colado de arquivo salvo no Windows chega com o
+> caractere invisível U+FEFF na frente. O `fetch` não diz "header inválido" —
+> ele estoura `Cannot convert argument to a ByteString`, que não parece ter
+> nada a ver. Já derrubou um deploy aqui. `api/_lib/datacrazy.ts` limpa isso
+> na leitura, mas evite gravar sujo.
+
 Depois, redeploy — `VITE_META_PIXEL_ID` só entra no bundle em um build novo.
 
-### 3. n8n — fluxo de entrada
+### 3. DataCrazy — chave de API e etapa do funil
 
-Webhook (POST) recebe do `/api/lead`:
+1. `crm.datacrazy.io` → **Configurações > Chaves de API** → *Gerar nova chave*.
+   Ela **aparece uma vez só**: copie na hora.
+2. Descubra a etapa onde o lead deve nascer:
 
-```json
-{
-  "name": "...", "whatsapp": "5547999999999", "opticsName": "...",
-  "revenue": "100-250k", "adsExperience": "agencia",
-  "origem": "lp-b2optic", "enviadoEm": "2026-08-21T18:00:00.000Z",
-  "pagina": "https://...",
-  "meta": {
-    "eventId": "...", "visitorId": "...",
-    "fbp": "fb.1....", "fbc": "fb.1....", "fbclid": "...",
-    "eventTime": 1787000000
-  },
-  "utm_source": "...", "utm_campaign": "..."
-}
+```bash
+curl -H "Authorization: Bearer $DATACRAZY_TOKEN" \
+  https://api.g1.datacrazy.io/api/v1/pipelines
+curl -H "Authorization: Bearer $DATACRAZY_TOKEN" \
+  https://api.g1.datacrazy.io/api/v1/pipelines/<id-do-funil>/stages
 ```
 
-O nó seguinte cria o lead no DataCrazy:
+Hoje: funil **Aquisição de Clientes** (`ad62cd56-…91ad`), etapa
+**Entrada de Lead** (`99f01c7a-…0e5f`).
 
-```
-POST https://api.g1.datacrazy.io/api/v1/leads
-Authorization: Bearer <token do DataCrazy>
+O que `api/_lib/datacrazy.ts` faz a cada envio:
 
-{
-  "name": "{{ $json.name }}",
-  "phone": "{{ $json.whatsapp }}",
-  "company": "{{ $json.opticsName }}",
-  "source": "LP B2Optic",
-  "additionalFields": [
-    { "name": "meta_visitor_id", "value": "{{ $json.meta.visitorId }}" },
-    { "name": "meta_fbp",        "value": "{{ $json.meta.fbp }}" },
-    { "name": "meta_fbc",        "value": "{{ $json.meta.fbc }}" },
-    { "name": "meta_event_id",   "value": "{{ $json.meta.eventId }}" },
-    { "name": "utm_campaign",    "value": "{{ $json.utm_campaign }}" }
-  ]
-}
-```
+| Chamada | Para quê |
+|---|---|
+| `POST /api/v1/leads` | cria o lead (`name`, `phone`, `company`, `source`) |
+| `POST /api/v1/leads/{id}/notes` | anotação com faturamento, UTMs e IDs da Meta |
+| `POST /api/v1/businesses` | põe o negócio na etapa do funil |
 
-**`additionalFields` é o coração do loop.** Sem `fbc` guardado, o evento de
-"virou cliente" três semanas depois chega na Meta sem saber de qual anúncio
-veio — vira número solto em vez de otimização.
+**Só a criação do lead decide o status devolvido para a página.** Anotação e
+negócio são acessórios: se falharem, o lead já existe e o time atende. O que
+falha vira log com `console.warn`.
 
-O webhook precisa responder **2xx**; a página mostra erro para o visitante se
-não responder, e é assim que deve ser (melhor a pessoa tentar de novo do que a
-gente perder o lead achando que deu certo).
+**A anotação é o coração do loop.** A API do CRM não tem campo personalizado no
+corpo do lead, então `meta_fbp`, `meta_fbc`, `meta_visitor_id` e
+`meta_event_id` moram no texto da anotação — que volta pela API em
+`GET /api/v1/leads/{id}/notes` (o campo se chama `history` na leitura e `note`
+na escrita). Sem o `fbc` guardado, o evento de "virou cliente" três semanas
+depois chega na Meta sem saber de qual anúncio veio — vira número solto em vez
+de otimização.
 
-### 4. n8n — fluxo de volta (etiqueta → Meta)
+Se o CRM não responder 2xx, a página mostra erro para o visitante, e é assim
+que deve ser: melhor a pessoa tentar de novo do que a gente perder o lead
+achando que deu certo. Quando isso acontece, o lead inteiro sai no log de erro
+da função — é a última cópia que existe dele.
 
-Gatilho: automação do DataCrazy que dispara ao aplicar a etiqueta. Se o payload
-não trouxer os `additionalFields`, buscar o lead por ID antes
-(`GET /api/v1/leads/{id}`).
+### 4. Fluxo de volta (etapa do funil → Meta)
+
+Gatilho: automação do DataCrazy que dispara quando o negócio muda de etapa. Os
+identificadores da Meta estão na anotação do lead, então busque as anotações
+antes (`GET /api/v1/leads/{id}/notes`) e leia `meta_fbp` / `meta_fbc` do campo
+`history`.
 
 ```
 POST https://<dominio-da-lp>/api/crm-event
@@ -171,16 +183,17 @@ x-b2o-secret: <CRM_EVENT_SECRET>
 }
 ```
 
-Estágios aceitos (`api/crm-event.ts`), etiqueta do DataCrazy → evento na Meta:
+Estágios aceitos (`api/crm-event.ts`) e a etapa do funil **Aquisição de
+Clientes** que dispara cada um:
 
-| `stage` | Evento na Meta | Tipo |
-|---|---|---|
-| `qualificado` | `LeadQualificado` | customizado |
-| `agendado` | `Schedule` | padrão |
-| `compareceu` | `ReuniaoRealizada` | customizado |
-| `cliente` | `Purchase` | padrão (aceita `value`) |
-| `desqualificado` | `LeadDesqualificado` | customizado |
-| `perdido` | `LeadPerdido` | customizado |
+| Etapa no DataCrazy | `stage` | Evento na Meta | Tipo |
+|---|---|---|---|
+| Qualificado | `qualificado` | `LeadQualificado` | customizado |
+| Reunião Agendada | `agendado` | `Schedule` | padrão |
+| Reunião Executada | `compareceu` | `ReuniaoRealizada` | customizado |
+| Ganho | `cliente` | `Purchase` | padrão (aceita `value`) |
+| Desqualificado | `desqualificado` | `LeadDesqualificado` | customizado |
+| Perdido | `perdido` | `LeadPerdido` | customizado |
 
 Para `cliente`, mandar junto `"value": 4800, "currency": "BRL"` com o valor
 real do contrato — é o que liga otimização por valor e ROAS de verdade.

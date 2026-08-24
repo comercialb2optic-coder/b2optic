@@ -5,13 +5,13 @@
  * só chama `submitLead(dados)`.
  *
  * O caminho é: navegador -> `/api/lead` (função na Vercel, mesmo domínio) ->
- * de lá saem em paralelo o evento para a Conversions API e o lead para o n8n.
+ * de lá saem em paralelo o evento para a Conversions API e o lead para o CRM.
  * Antes daqui ir para a rede, o pixel dispara o mesmo `Lead` no navegador com
  * o MESMO `event_id`, que é como a Meta deduplica os dois caminhos.
  *
- * Por que não postar direto no n8n como antes: do lado do cliente não existe
+ * Por que não postar direto no CRM: do lado do cliente não existe
  * IP nem user agent reais (os dois pesam no match da Meta), o bloqueador de
- * anúncio derruba a chamada, e a URL do webhook ficava exposta no bundle.
+ * anúncio derruba a chamada, e a chave da API do CRM não pode viver no bundle.
  *
  * Em `pnpm dev` a rota `/api/lead` não existe — Vite não roda função da
  * Vercel. Para testar o fluxo inteiro localmente, use `vercel dev`.

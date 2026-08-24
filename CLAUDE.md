@@ -74,13 +74,14 @@ Os fundos alternam de forma que nenhuma seção encoste em outra da mesma cor. A
 
 O card vive em `components/LeadForm.tsx` e aparece em **dois lugares**: dentro do hero (o CTA da dobra — o hero não tem botão) e na seção `DiagnosticForm` do fim da página. Cada instância tem estado próprio, de propósito. Ao mexer no formulário, mexa só no `LeadForm` — as duas posições herdam.
 
-O envio passa por `client/src/lib/submitLead.ts`, que lê `VITE_LEAD_WEBHOOK_URL`. Ele também normaliza o WhatsApp para o formato do CRM e captura UTM/fbclid/gclid da URL — o tráfego vem de anúncio, então saber de qual anúncio veio o lead importa tanto quanto o lead.
+O envio passa por `client/src/lib/submitLead.ts`, que posta em `/api/lead` (função na Vercel, mesmo domínio). Ele também normaliza o WhatsApp para o formato do CRM e captura UTM/fbclid/gclid da URL — o tráfego vem de anúncio, então saber de qual anúncio veio o lead importa tanto quanto o lead. De `/api/lead` para a frente o caminho é `api/_lib/datacrazy.ts` → API do DataCrazy; runbook em `TRACKING.md`.
 
 **Sem a variável definida, o envio falha de propósito e mostra erro na tela.** Isso é intencional: o pior cenário possível é a tela de sucesso aparecer e o lead não existir em lugar nenhum. Copie `.env.example` para `.env.local` para configurar.
 
 ## Pendências conhecidas
 
-- [ ] `VITE_LEAD_WEBHOOK_URL` não configurada — formulário ainda não entrega lead
+- [x] ~~formulário não entrega lead~~ — resolvido em 23/08/2026: `/api/lead` cria lead, anotação e negócio direto no DataCrazy (`DATACRAZY_TOKEN` + `DATACRAZY_STAGE_ID` na Vercel)
+- [ ] Pixel e Conversions API ainda desligados: `VITE_META_PIXEL_ID`, `META_PIXEL_ID` e `META_CAPI_ACCESS_TOKEN` não existem na Vercel, então o bundle sai sem pixel e `/api/lead` responde `capi:false`
 - [ ] `ONBOARDING_SECTION.steps` em `content.ts` é **conteúdo provisório**, deduzido do app e da metodologia. Precisa das etapas reais antes de publicar
 - [ ] Faltam as logos de **WhatsApp** e **B2Performance** no `ToolsOrbit` — só esses dois nós ainda renderizam o nome em tipografia. Os outros sete já têm arquivo em `public/ferramentas/` e o campo `logo` preenchido. Logo monocromática escura precisa ser recolorida para branco antes de entrar, senão some no nó (`#141A28`) — foi o caso da OpenAI
 - [ ] Links de redes sociais em `SOCIAL` (`content.ts`) apontam para `#`, e o WhatsApp está como `wa.me/55XXXXXXXXXXX`
