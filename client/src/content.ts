@@ -117,7 +117,7 @@ export const FORM = {
     'Responda três perguntas rápidas e um especialista liga em 10 minutos para montar seu diagnóstico.',
   steps: {
     1: { label: 'Seus dados', title: 'Como a gente fala com você?' },
-    2: { label: 'Sua ótica', title: 'Qual o faturamento mensal hoje?' },
+    2: { label: 'Sua ótica', title: 'Qual é o faturamento mensal hoje?' },
     3: { label: 'Seu momento', title: 'Você já anuncia?' },
   },
   /** Contador de etapa — o total mora aqui, não no JSX do formulário. */
@@ -183,13 +183,13 @@ export const CASES_SECTION = {
   cardKicker: 'Depoimento em vídeo',
   items: [
     { id: 1, videoId: 'RxmJEAwXWAQ', oticaName: 'Ótica Ipanema' },
-    { id: 2, videoId: 'VfOnDZZUMwg', oticaName: 'Ótica Vitaliz' },
-    { id: 3, videoId: '5z9TI2ATX40', oticaName: 'Ótica Brasil' },
+    { id: 2, videoId: 'q7kYlRXDiQs', oticaName: 'Ótica Anderson Glasses' },
+    { id: 3, videoId: 'IhW7ZVQUw5Y', oticaName: 'Ótica Diniz' },
     { id: 4, videoId: 'LCrl3aXCDCg', oticaName: 'Ótica Visão' },
     { id: 5, videoId: 'Y-deXtNVCfM', oticaName: 'Ótica Esquadra' },
     { id: 6, videoId: '1AOnXMj4d04', oticaName: 'Ótica Visual Timon' },
-    { id: 7, videoId: 'q7kYlRXDiQs', oticaName: 'Ótica Anderson Glasses' },
-    { id: 8, videoId: 'IhW7ZVQUw5Y', oticaName: 'Ótica Diniz' },
+    { id: 7, videoId: 'VfOnDZZUMwg', oticaName: 'Ótica Vitaliz' },
+    { id: 8, videoId: '5z9TI2ATX40', oticaName: 'Ótica Brasil' },
   ],
 } as const;
 
@@ -207,7 +207,7 @@ export const DIAGNOSTIC_PREVIEW = {
     {
       index: '02',
       title: 'O que ela realmente precisa',
-      body: 'Mostramos exatamente o que precisa ser feito e qual o próximo passo — sem enrolação e sem pacote genérico.',
+      body: 'Mostramos exatamente o que precisa ser feito e qual é o próximo passo — sem enrolação e sem pacote genérico.',
     },
     {
       index: '03',
@@ -300,7 +300,7 @@ interface Tool {
 
 export const TOOLS_SECTION = {
   eyebrow: 'Tecnologia',
-  title: 'Uma estrutura inteira conectada na sua ótica',
+  title: 'Uma estrutura inteira conectada à sua ótica',
   subtitle:
     'Não é ferramenta solta que você tem que aprender a usar. É captação, atendimento, agendamento e acompanhamento no mesmo fluxo — e a gente opera tudo.',
   tools: [
