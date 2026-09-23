@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 
 const OPTICAS_LOGOS = [
-  { id: 1, name: 'Ótica Ipanema', url: '/oticas/otica-ipanema.png' },
   { id: 2, name: 'Clic Optical', url: '/oticas/clicoptical.png' },
   { id: 3, name: 'Mercadão dos Óculos', url: '/oticas/mercadao-dos-oculos.png' },
   { id: 4, name: 'Ótica Vitelli', url: '/oticas/otica-vitelli.png' },
