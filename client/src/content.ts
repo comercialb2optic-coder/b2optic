@@ -182,6 +182,7 @@ export const CASES_SECTION = {
   /** Kicker que aparece acima do nome da ótica, no pé de cada card. */
   cardKicker: 'Depoimento em vídeo',
   items: [
+    { id: 1, videoId: 'B866f_mgi-Y', oticaName: 'Ótica parceira' },
     { id: 2, videoId: 'q7kYlRXDiQs', oticaName: 'Ótica Anderson Glasses' },
     { id: 3, videoId: 'IhW7ZVQUw5Y', oticaName: 'Ótica Diniz' },
     { id: 4, videoId: 'LCrl3aXCDCg', oticaName: 'Ótica Visão' },
